@@ -12,18 +12,18 @@ Setup inicial do projeto: ferramentas de build, linguagem e estilizacao.
 - [x] Commit 3: `chore: add path aliases and TypeScript strict config`
 - [x] Commit 4: `docs: add initial README and project roadmap`
 
-## Fase 2 - Design System
+## Fase 2 - Design System (concluida)
 
 Componentes reutilizaveis de UI e tipos compartilhados.
 
-- [ ] `feat: add TypeScript types for domain entities`
-- [ ] `feat: add Button component with variants`
-- [ ] `feat: add Input and Textarea form components`
-- [ ] `feat: add Select component`
-- [ ] `feat: add Card component`
-- [ ] `feat: add Modal component`
-- [ ] `feat: add StatusBadge component`
-- [ ] `feat: add Toast notification system`
+- [x] `feat: add TypeScript types for domain entities`
+- [x] `feat: add Button component with variants`
+- [x] `feat: add Input and Textarea form components`
+- [x] `feat: add Select component`
+- [x] `feat: add Card component`
+- [x] `feat: add Modal component`
+- [x] `feat: add StatusBadge component`
+- [x] `feat: add Toast notification system`
 
 ## Fase 3 - Supabase e Autenticacao
 
