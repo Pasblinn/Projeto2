@@ -25,15 +25,15 @@ Componentes reutilizaveis de UI e tipos compartilhados.
 - [x] `feat: add StatusBadge component`
 - [x] `feat: add Toast notification system`
 
-## Fase 3 - Supabase e Autenticacao
+## Fase 3 - Supabase e Autenticacao (concluida)
 
 Integracao com backend e controle de sessao.
 
-- [ ] `feat: add Supabase client configuration`
-- [ ] `feat: add AuthContext with session management`
-- [ ] `feat: add Login page`
-- [ ] `feat: add database schema SQL (users, ordens_producao)`
-- [ ] `docs: add Supabase setup instructions`
+- [x] `feat: add Supabase client configuration`
+- [x] `feat: add AuthContext with session management`
+- [x] `feat: add Login page`
+- [x] `feat: add database schema SQL (users, ordens_producao)`
+- [x] `docs: add Supabase setup instructions`
 
 ## Fase 4 - Layout e Rotas
 
