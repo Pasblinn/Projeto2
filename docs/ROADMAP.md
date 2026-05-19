@@ -35,13 +35,13 @@ Integracao com backend e controle de sessao.
 - [x] `feat: add database schema SQL (users, ordens_producao)`
 - [x] `docs: add Supabase setup instructions`
 
-## Fase 4 - Layout e Rotas
+## Fase 4 - Layout e Rotas (concluida)
 
 Estrutura de navegacao do app autenticado.
 
-- [ ] `feat: add Layout component with sidebar`
-- [ ] `feat: add React Router with protected routes`
-- [ ] `feat: add role-based route guards`
+- [x] `feat: add Layout component with sidebar`
+- [x] `feat: add React Router with protected routes`
+- [x] `feat: add role-based route guards`
 
 ## Fase 5 - Ordens de Producao
 
