@@ -1,16 +1,31 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Input from '@/components/Input'
 
+interface LocationState {
+  from?: string
+}
+
 function Login() {
-  const { signIn } = useAuth()
+  const { signIn, session, loading } = useAuth()
   const toast = useToast()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  const redirectTo = (location.state as LocationState | null)?.from ?? '/dashboard'
+
+  useEffect(() => {
+    if (!loading && session) {
+      navigate(redirectTo, { replace: true })
+    }
+  }, [loading, session, navigate, redirectTo])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -20,6 +35,7 @@ function Login() {
     try {
       await signIn(email, password)
       toast.success('Sessao iniciada com sucesso')
+      navigate(redirectTo, { replace: true })
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Falha ao entrar'
       toast.error(message)
