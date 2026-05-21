@@ -19,9 +19,10 @@ export async function listOrdens(): Promise<OrdemProducao[]> {
     .from(TABLE)
     .select(SELECT_COLUMNS)
     .order('numero', { ascending: false })
+    .returns<OrdemProducao[]>()
 
   if (error) throw new Error(error.message)
-  return (data ?? []) as OrdemProducao[]
+  return data ?? []
 }
 
 export async function updateStatusProducao(
@@ -34,9 +35,10 @@ export async function updateStatusProducao(
     .eq('id', id)
     .select(SELECT_COLUMNS)
     .single()
+    .returns<OrdemProducao>()
 
   if (error) throw new Error(error.message)
-  return data as OrdemProducao
+  return data
 }
 
 export async function aprovarOrdem(
@@ -53,9 +55,10 @@ export async function aprovarOrdem(
     .eq('id', id)
     .select(SELECT_COLUMNS)
     .single()
+    .returns<OrdemProducao>()
 
   if (error) throw new Error(error.message)
-  return data as OrdemProducao
+  return data
 }
 
 export async function getOrdem(id: string): Promise<OrdemProducao> {
@@ -64,9 +67,10 @@ export async function getOrdem(id: string): Promise<OrdemProducao> {
     .select(SELECT_COLUMNS)
     .eq('id', id)
     .single()
+    .returns<OrdemProducao>()
 
   if (error) throw new Error(error.message)
-  return data as OrdemProducao
+  return data
 }
 
 export async function createOrdem(
@@ -78,9 +82,10 @@ export async function createOrdem(
     .insert({ ...input, criada_por: criadaPor })
     .select(SELECT_COLUMNS)
     .single()
+    .returns<OrdemProducao>()
 
   if (error) throw new Error(error.message)
-  return data as OrdemProducao
+  return data
 }
 
 export async function updateOrdem(
@@ -93,7 +98,8 @@ export async function updateOrdem(
     .eq('id', id)
     .select(SELECT_COLUMNS)
     .single()
+    .returns<OrdemProducao>()
 
   if (error) throw new Error(error.message)
-  return data as OrdemProducao
+  return data
 }
