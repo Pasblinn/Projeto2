@@ -28,40 +28,45 @@ export type StatusFinanceiro =
 export type FormaPagamento =
   | 'pix'
   | 'boleto'
-  | 'dinheiro'
   | 'transferencia'
+  | 'dinheiro'
   | 'cartao'
-  | 'outro'
 
 export interface OrdemProducao {
   id: string
-  codigo: string
+  numero: number
   tipo: TipoOP
-  data_inicio: string
-  data_termino?: string | null
-  preparacao_maquina: string
-  material?: string | null
   cliente: string
-  peca: string
-  quantidade_total: number
-  preco_servico?: number | null
-  maquina?: string | null
-  operador?: string | null
+  descricao: string
+  quantidade: number
+  quantidade_produzida: number
+  data_entrega?: string | null
   status_producao: StatusProducao
   status_financeiro: StatusFinanceiro
+  forma_pagamento?: FormaPagamento | null
+  valor_total?: number | null
+  valor_pago: number
+  observacoes?: string | null
   aprovada: boolean
   aprovada_por?: string | null
   aprovada_em?: string | null
-  valor_total?: number | null
-  forma_pagamento?: FormaPagamento | null
-  data_vencimento?: string | null
-  custos_extras?: number | null
-  prejuizo_defeitos?: number | null
-  observacoes?: string | null
-  created_by?: string | null
+  criada_por: string
   created_at: string
   updated_at: string
 }
+
+export type NovaOrdemProducao = Pick<
+  OrdemProducao,
+  'tipo' | 'cliente' | 'descricao' | 'quantidade'
+> &
+  Partial<
+    Pick<
+      OrdemProducao,
+      'data_entrega' | 'forma_pagamento' | 'valor_total' | 'observacoes'
+    >
+  >
+
+export type AtualizaOrdemProducao = Partial<NovaOrdemProducao>
 
 export type Turno = 'manha' | 'tarde' | 'noite'
 
