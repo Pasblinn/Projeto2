@@ -43,17 +43,17 @@ Estrutura de navegacao do app autenticado.
 - [x] `feat: add React Router with protected routes`
 - [x] `feat: add role-based route guards`
 
-## Fase 5 - Ordens de Producao
+## Fase 5 - Ordens de Producao (concluida)
 
 Modulo principal de OPs: CRUD, aprovacao e status.
 
-- [ ] `feat: add Dashboard page with OP list`
-- [ ] `feat: add OP creation form`
-- [ ] `feat: add OP details page`
-- [ ] `feat: add OP edit flow`
-- [ ] `feat: add OP approval workflow`
-- [ ] `feat: add OP status controls (iniciar, pausar, finalizar)`
-- [ ] `feat: add search and filter on Dashboard`
+- [x] `feat: add Dashboard page with OP list`
+- [x] `feat: add OP creation form`
+- [x] `feat: add OP details page`
+- [x] `feat: add OP edit flow`
+- [x] `feat: add OP approval workflow`
+- [x] `feat: add OP status controls (iniciar, pausar, finalizar)`
+- [x] `feat: add search and filter on Dashboard`
 
 ## Fase 6 - Registro de Producao
 

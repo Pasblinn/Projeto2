@@ -1,15 +1,40 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import OrdemForm from '@/components/OrdemForm'
+import Select from '@/components/Select'
 import StatusBadge from '@/components/StatusBadge'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import { createOrdem, listOrdens } from '@/services/ordens'
-import type { NovaOrdemProducao, OrdemProducao } from '@/types'
+import type {
+  NovaOrdemProducao,
+  OrdemProducao,
+  StatusFinanceiro,
+  StatusProducao,
+} from '@/types'
 import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
+
+const PRODUCAO_FILTER_OPTIONS: { value: StatusProducao | ''; label: string }[] = [
+  { value: '', label: 'Producao: todas' },
+  { value: 'criada', label: 'Criada' },
+  { value: 'em_producao', label: 'Em producao' },
+  { value: 'pausada', label: 'Pausada' },
+  { value: 'finalizada', label: 'Finalizada' },
+  { value: 'cancelada', label: 'Cancelada' },
+]
+
+const FINANCEIRO_FILTER_OPTIONS: { value: StatusFinanceiro | ''; label: string }[] = [
+  { value: '', label: 'Financeiro: todos' },
+  { value: 'pendente', label: 'Pendente' },
+  { value: 'parcial', label: 'Parcial' },
+  { value: 'pago', label: 'Pago' },
+  { value: 'atrasado', label: 'Atrasado' },
+  { value: 'cancelado', label: 'Cancelado' },
+]
 
 function Dashboard() {
   const toast = useToast()
@@ -19,6 +44,9 @@ function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
+  const [search, setSearch] = useState('')
+  const [filtroProducao, setFiltroProducao] = useState<StatusProducao | ''>('')
+  const [filtroFinanceiro, setFiltroFinanceiro] = useState<StatusFinanceiro | ''>('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -37,6 +65,20 @@ function Dashboard() {
   useEffect(() => {
     load()
   }, [load])
+
+  const ordensFiltradas = useMemo(() => {
+    const termo = search.trim().toLowerCase()
+    return ordens.filter((op) => {
+      if (filtroProducao && op.status_producao !== filtroProducao) return false
+      if (filtroFinanceiro && op.status_financeiro !== filtroFinanceiro) return false
+      if (!termo) return true
+      return (
+        op.cliente.toLowerCase().includes(termo) ||
+        op.descricao.toLowerCase().includes(termo) ||
+        formatOpCode(op.numero).toLowerCase().includes(termo)
+      )
+    })
+  }, [ordens, search, filtroProducao, filtroFinanceiro])
 
   async function handleCreate(values: NovaOrdemProducao) {
     if (!user) return
@@ -71,51 +113,85 @@ function Dashboard() {
             Nenhuma ordem de producao cadastrada ainda.
           </p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-200 text-xs uppercase text-gray-500">
-                <tr>
-                  <th className="px-3 py-2 font-medium">OP</th>
-                  <th className="px-3 py-2 font-medium">Cliente</th>
-                  <th className="px-3 py-2 font-medium">Descricao</th>
-                  <th className="px-3 py-2 font-medium">Qtd.</th>
-                  <th className="px-3 py-2 font-medium">Entrega</th>
-                  <th className="px-3 py-2 font-medium">Producao</th>
-                  <th className="px-3 py-2 font-medium">Financeiro</th>
-                  <th className="px-3 py-2 text-right font-medium">Valor</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {ordens.map((op) => (
-                  <tr
-                    key={op.id}
-                    onClick={() => navigate(`/ordens/${op.id}`)}
-                    className="cursor-pointer hover:bg-gray-50"
-                  >
-                    <td className="px-3 py-2 font-medium text-gray-900">
-                      {formatOpCode(op.numero)}
-                    </td>
-                    <td className="px-3 py-2 text-gray-700">{op.cliente}</td>
-                    <td className="max-w-xs truncate px-3 py-2 text-gray-700">
-                      {op.descricao}
-                    </td>
-                    <td className="px-3 py-2 text-gray-700">
-                      {op.quantidade_produzida}/{op.quantidade}
-                    </td>
-                    <td className="px-3 py-2 text-gray-700">{formatDate(op.data_entrega)}</td>
-                    <td className="px-3 py-2">
-                      <StatusBadge kind="producao" status={op.status_producao} />
-                    </td>
-                    <td className="px-3 py-2">
-                      <StatusBadge kind="financeiro" status={op.status_financeiro} />
-                    </td>
-                    <td className="px-3 py-2 text-right text-gray-700">
-                      {formatCurrency(op.valor_total)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex-1">
+                <Input
+                  placeholder="Buscar por cliente, descricao ou codigo da OP..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              <Select
+                className="sm:w-48"
+                options={PRODUCAO_FILTER_OPTIONS}
+                value={filtroProducao}
+                onChange={(e) => setFiltroProducao(e.target.value as StatusProducao | '')}
+              />
+              <Select
+                className="sm:w-48"
+                options={FINANCEIRO_FILTER_OPTIONS}
+                value={filtroFinanceiro}
+                onChange={(e) =>
+                  setFiltroFinanceiro(e.target.value as StatusFinanceiro | '')
+                }
+              />
+            </div>
+
+            {ordensFiltradas.length === 0 ? (
+              <p className="py-8 text-center text-sm text-gray-500">
+                Nenhuma OP corresponde aos filtros aplicados.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-gray-200 text-xs uppercase text-gray-500">
+                    <tr>
+                      <th className="px-3 py-2 font-medium">OP</th>
+                      <th className="px-3 py-2 font-medium">Cliente</th>
+                      <th className="px-3 py-2 font-medium">Descricao</th>
+                      <th className="px-3 py-2 font-medium">Qtd.</th>
+                      <th className="px-3 py-2 font-medium">Entrega</th>
+                      <th className="px-3 py-2 font-medium">Producao</th>
+                      <th className="px-3 py-2 font-medium">Financeiro</th>
+                      <th className="px-3 py-2 text-right font-medium">Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {ordensFiltradas.map((op) => (
+                      <tr
+                        key={op.id}
+                        onClick={() => navigate(`/ordens/${op.id}`)}
+                        className="cursor-pointer hover:bg-gray-50"
+                      >
+                        <td className="px-3 py-2 font-medium text-gray-900">
+                          {formatOpCode(op.numero)}
+                        </td>
+                        <td className="px-3 py-2 text-gray-700">{op.cliente}</td>
+                        <td className="max-w-xs truncate px-3 py-2 text-gray-700">
+                          {op.descricao}
+                        </td>
+                        <td className="px-3 py-2 text-gray-700">
+                          {op.quantidade_produzida}/{op.quantidade}
+                        </td>
+                        <td className="px-3 py-2 text-gray-700">
+                          {formatDate(op.data_entrega)}
+                        </td>
+                        <td className="px-3 py-2">
+                          <StatusBadge kind="producao" status={op.status_producao} />
+                        </td>
+                        <td className="px-3 py-2">
+                          <StatusBadge kind="financeiro" status={op.status_financeiro} />
+                        </td>
+                        <td className="px-3 py-2 text-right text-gray-700">
+                          {formatCurrency(op.valor_total)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
       </Card>
