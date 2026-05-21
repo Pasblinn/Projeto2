@@ -1,18 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Button from '@/components/Button'
 import Card from '@/components/Card'
+import Modal from '@/components/Modal'
+import OrdemForm from '@/components/OrdemForm'
 import StatusBadge from '@/components/StatusBadge'
+import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
-import { listOrdens } from '@/services/ordens'
-import type { OrdemProducao } from '@/types'
+import { createOrdem, listOrdens } from '@/services/ordens'
+import type { NovaOrdemProducao, OrdemProducao } from '@/types'
 import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
 
 function Dashboard() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [ordens, setOrdens] = useState<OrdemProducao[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [creating, setCreating] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -32,9 +38,30 @@ function Dashboard() {
     load()
   }, [load])
 
+  async function handleCreate(values: NovaOrdemProducao) {
+    if (!user) return
+    try {
+      const created = await createOrdem(values, user.id)
+      toast.success(`${formatOpCode(created.numero)} criada com sucesso`)
+      setCreating(false)
+      await load()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Falha ao criar OP'
+      toast.error(message)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <Card title="Ordens de Producao" subtitle="Lista de todas as OPs cadastradas">
+      <Card
+        title="Ordens de Producao"
+        subtitle="Lista de todas as OPs cadastradas"
+        actions={
+          <Button variant="primary" size="sm" onClick={() => setCreating(true)}>
+            Nova OP
+          </Button>
+        }
+      >
         {loading ? (
           <p className="py-8 text-center text-sm text-gray-500">Carregando ordens...</p>
         ) : error ? (
@@ -92,6 +119,14 @@ function Dashboard() {
           </div>
         )}
       </Card>
+
+      <Modal open={creating} onClose={() => setCreating(false)} title="Nova Ordem de Producao">
+        <OrdemForm
+          submitLabel="Criar OP"
+          onSubmit={handleCreate}
+          onCancel={() => setCreating(false)}
+        />
+      </Modal>
     </div>
   )
 }

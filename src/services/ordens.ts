@@ -1,5 +1,5 @@
 import { supabase } from '@/services/supabase'
-import type { OrdemProducao } from '@/types'
+import type { NovaOrdemProducao, OrdemProducao } from '@/types'
 
 const TABLE = 'ordens_producao'
 
@@ -17,4 +17,18 @@ export async function listOrdens(): Promise<OrdemProducao[]> {
 
   if (error) throw new Error(error.message)
   return (data ?? []) as OrdemProducao[]
+}
+
+export async function createOrdem(
+  input: NovaOrdemProducao,
+  criadaPor: string,
+): Promise<OrdemProducao> {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert({ ...input, criada_por: criadaPor })
+    .select(SELECT_COLUMNS)
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data as OrdemProducao
 }
