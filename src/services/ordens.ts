@@ -1,5 +1,5 @@
 import { supabase } from '@/services/supabase'
-import type { NovaOrdemProducao, OrdemProducao } from '@/types'
+import type { AtualizaOrdemProducao, NovaOrdemProducao, OrdemProducao } from '@/types'
 
 const TABLE = 'ordens_producao'
 
@@ -37,6 +37,21 @@ export async function createOrdem(
   const { data, error } = await supabase
     .from(TABLE)
     .insert({ ...input, criada_por: criadaPor })
+    .select(SELECT_COLUMNS)
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data as OrdemProducao
+}
+
+export async function updateOrdem(
+  id: string,
+  input: AtualizaOrdemProducao,
+): Promise<OrdemProducao> {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update(input)
+    .eq('id', id)
     .select(SELECT_COLUMNS)
     .single()
 

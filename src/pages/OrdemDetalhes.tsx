@@ -2,10 +2,12 @@ import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import Modal from '@/components/Modal'
+import OrdemForm from '@/components/OrdemForm'
 import StatusBadge from '@/components/StatusBadge'
 import { useToast } from '@/contexts/ToastContext'
-import { getOrdem } from '@/services/ordens'
-import type { OrdemProducao } from '@/types'
+import { getOrdem, updateOrdem } from '@/services/ordens'
+import type { NovaOrdemProducao, OrdemProducao } from '@/types'
 import {
   FORMA_PAGAMENTO_LABEL,
   TIPO_OP_LABEL,
@@ -30,6 +32,7 @@ function OrdemDetalhes() {
   const [ordem, setOrdem] = useState<OrdemProducao | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [editing, setEditing] = useState(false)
 
   const load = useCallback(async () => {
     if (!id) return
@@ -49,6 +52,19 @@ function OrdemDetalhes() {
   useEffect(() => {
     load()
   }, [load])
+
+  async function handleEdit(values: NovaOrdemProducao) {
+    if (!ordem) return
+    try {
+      const updated = await updateOrdem(ordem.id, values)
+      setOrdem(updated)
+      setEditing(false)
+      toast.success('OP atualizada com sucesso')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Falha ao atualizar a OP'
+      toast.error(message)
+    }
+  }
 
   if (loading) {
     return <p className="py-8 text-center text-sm text-gray-500">Carregando OP...</p>
@@ -79,9 +95,14 @@ function OrdemDetalhes() {
           <StatusBadge kind="producao" status={ordem.status_producao} />
           <StatusBadge kind="financeiro" status={ordem.status_financeiro} />
         </div>
-        <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')}>
-          Voltar
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
+            Editar
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')}>
+            Voltar
+          </Button>
+        </div>
       </div>
 
       <Card title="Dados da Ordem">
@@ -108,6 +129,19 @@ function OrdemDetalhes() {
           </div>
         )}
       </Card>
+
+      <Modal
+        open={editing}
+        onClose={() => setEditing(false)}
+        title={`Editar ${formatOpCode(ordem.numero)}`}
+      >
+        <OrdemForm
+          initial={ordem}
+          submitLabel="Salvar alteracoes"
+          onSubmit={handleEdit}
+          onCancel={() => setEditing(false)}
+        />
+      </Modal>
     </div>
   )
 }
