@@ -7,8 +7,13 @@ import OrdemForm from '@/components/OrdemForm'
 import StatusBadge from '@/components/StatusBadge'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
-import { aprovarOrdem, getOrdem, updateOrdem } from '@/services/ordens'
-import type { NovaOrdemProducao, OrdemProducao } from '@/types'
+import {
+  aprovarOrdem,
+  getOrdem,
+  updateOrdem,
+  updateStatusProducao,
+} from '@/services/ordens'
+import type { NovaOrdemProducao, OrdemProducao, StatusProducao } from '@/types'
 import {
   FORMA_PAGAMENTO_LABEL,
   TIPO_OP_LABEL,
@@ -24,6 +29,46 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
       <dd className="mt-0.5 text-sm text-gray-900">{children}</dd>
     </div>
   )
+}
+
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger'
+
+interface StatusAction {
+  label: string
+  to: StatusProducao
+  variant: ButtonVariant
+  disabled?: boolean
+  hint?: string
+}
+
+function statusActionsFor(ordem: OrdemProducao): StatusAction[] {
+  switch (ordem.status_producao) {
+    case 'criada':
+      return [
+        {
+          label: 'Iniciar producao',
+          to: 'em_producao',
+          variant: 'primary',
+          disabled: !ordem.aprovada,
+          hint: 'Aprove a OP antes de iniciar a producao',
+        },
+        { label: 'Cancelar', to: 'cancelada', variant: 'danger' },
+      ]
+    case 'em_producao':
+      return [
+        { label: 'Pausar', to: 'pausada', variant: 'secondary' },
+        { label: 'Finalizar', to: 'finalizada', variant: 'success' },
+        { label: 'Cancelar', to: 'cancelada', variant: 'danger' },
+      ]
+    case 'pausada':
+      return [
+        { label: 'Retomar', to: 'em_producao', variant: 'primary' },
+        { label: 'Finalizar', to: 'finalizada', variant: 'success' },
+        { label: 'Cancelar', to: 'cancelada', variant: 'danger' },
+      ]
+    default:
+      return []
+  }
 }
 
 function OrdemDetalhes() {
@@ -54,6 +99,18 @@ function OrdemDetalhes() {
   useEffect(() => {
     load()
   }, [load])
+
+  async function handleStatus(novoStatus: StatusProducao) {
+    if (!ordem) return
+    try {
+      const updated = await updateStatusProducao(ordem.id, novoStatus)
+      setOrdem(updated)
+      toast.success('Status de producao atualizado')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Falha ao atualizar o status'
+      toast.error(message)
+    }
+  }
 
   async function handleAprovar() {
     if (!ordem || !user) return
@@ -164,6 +221,38 @@ function OrdemDetalhes() {
             )}
           </div>
         )}
+      </Card>
+
+      <Card title="Controle de Producao">
+        {(() => {
+          const actions = statusActionsFor(ordem)
+          if (actions.length === 0) {
+            return (
+              <p className="text-sm text-gray-600">
+                A producao desta OP esta {ordem.status_producao === 'finalizada' ? 'finalizada' : 'cancelada'}; nao ha acoes disponiveis.
+              </p>
+            )
+          }
+          const blockedHint = actions.find((a) => a.disabled)?.hint
+          return (
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-2">
+                {actions.map((action) => (
+                  <Button
+                    key={action.to + action.label}
+                    variant={action.variant}
+                    size="sm"
+                    disabled={action.disabled}
+                    onClick={() => handleStatus(action.to)}
+                  >
+                    {action.label}
+                  </Button>
+                ))}
+              </div>
+              {blockedHint && <p className="text-xs text-gray-500">{blockedHint}</p>}
+            </div>
+          )
+        })()}
       </Card>
 
       <Modal

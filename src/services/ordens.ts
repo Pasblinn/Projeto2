@@ -1,5 +1,10 @@
 import { supabase } from '@/services/supabase'
-import type { AtualizaOrdemProducao, NovaOrdemProducao, OrdemProducao } from '@/types'
+import type {
+  AtualizaOrdemProducao,
+  NovaOrdemProducao,
+  OrdemProducao,
+  StatusProducao,
+} from '@/types'
 
 const TABLE = 'ordens_producao'
 
@@ -17,6 +22,21 @@ export async function listOrdens(): Promise<OrdemProducao[]> {
 
   if (error) throw new Error(error.message)
   return (data ?? []) as OrdemProducao[]
+}
+
+export async function updateStatusProducao(
+  id: string,
+  status: StatusProducao,
+): Promise<OrdemProducao> {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .update({ status_producao: status })
+    .eq('id', id)
+    .select(SELECT_COLUMNS)
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data as OrdemProducao
 }
 
 export async function aprovarOrdem(
