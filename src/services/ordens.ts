@@ -19,6 +19,17 @@ export async function listOrdens(): Promise<OrdemProducao[]> {
   return (data ?? []) as OrdemProducao[]
 }
 
+export async function getOrdem(id: string): Promise<OrdemProducao> {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select(SELECT_COLUMNS)
+    .eq('id', id)
+    .single()
+
+  if (error) throw new Error(error.message)
+  return data as OrdemProducao
+}
+
 export async function createOrdem(
   input: NovaOrdemProducao,
   criadaPor: string,
