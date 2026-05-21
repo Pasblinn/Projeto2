@@ -5,8 +5,9 @@ import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import OrdemForm from '@/components/OrdemForm'
 import StatusBadge from '@/components/StatusBadge'
+import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
-import { getOrdem, updateOrdem } from '@/services/ordens'
+import { aprovarOrdem, getOrdem, updateOrdem } from '@/services/ordens'
 import type { NovaOrdemProducao, OrdemProducao } from '@/types'
 import {
   FORMA_PAGAMENTO_LABEL,
@@ -29,6 +30,7 @@ function OrdemDetalhes() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const toast = useToast()
+  const { user, hasRole } = useAuth()
   const [ordem, setOrdem] = useState<OrdemProducao | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,6 +54,18 @@ function OrdemDetalhes() {
   useEffect(() => {
     load()
   }, [load])
+
+  async function handleAprovar() {
+    if (!ordem || !user) return
+    try {
+      const updated = await aprovarOrdem(ordem.id, user.id)
+      setOrdem(updated)
+      toast.success(`${formatOpCode(updated.numero)} aprovada`)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Falha ao aprovar a OP'
+      toast.error(message)
+    }
+  }
 
   async function handleEdit(values: NovaOrdemProducao) {
     if (!ordem) return
@@ -126,6 +140,28 @@ function OrdemDetalhes() {
         {ordem.observacoes && (
           <div className="mt-4">
             <Field label="Observacoes">{ordem.observacoes}</Field>
+          </div>
+        )}
+      </Card>
+
+      <Card title="Aprovacao">
+        {ordem.aprovada ? (
+          <div className="flex items-center gap-2 text-sm text-green-700">
+            <StatusBadge kind="custom" tone="green">
+              Aprovada
+            </StatusBadge>
+            <span className="text-gray-600">em {formatDate(ordem.aprovada_em)}</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-sm text-gray-600">
+              Esta OP ainda nao foi aprovada para producao.
+            </p>
+            {hasRole(['financeiro', 'chefe']) && (
+              <Button variant="success" size="sm" onClick={handleAprovar}>
+                Aprovar OP
+              </Button>
+            )}
           </div>
         )}
       </Card>
