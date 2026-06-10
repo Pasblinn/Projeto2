@@ -11,13 +11,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { listOrdens } from '@/services/ordens'
 import { createRegistro, listRegistros } from '@/services/producao'
 import type { OrdemProducao, RegistroProducao, Turno } from '@/types'
-import { formatDate, formatOpCode } from '@/utils/format'
-
-export const TURNO_LABEL: Record<Turno, string> = {
-  manha: 'Manha',
-  tarde: 'Tarde',
-  noite: 'Noite',
-}
+import { formatDate, formatOpCode, TURNO_LABEL } from '@/utils/format'
 
 const TURNO_OPTIONS = (Object.keys(TURNO_LABEL) as Turno[]).map((value) => ({
   value,

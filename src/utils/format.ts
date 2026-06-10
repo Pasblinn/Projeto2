@@ -1,4 +1,4 @@
-import type { FormaPagamento, TipoOP } from '@/types'
+import type { FormaPagamento, TipoMovimento, TipoOP, Turno } from '@/types'
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -38,4 +38,18 @@ export const FORMA_PAGAMENTO_LABEL: Record<FormaPagamento, string> = {
   transferencia: 'Transferencia',
   dinheiro: 'Dinheiro',
   cartao: 'Cartao',
+}
+
+export const TURNO_LABEL: Record<Turno, string> = {
+  manha: 'Manha',
+  tarde: 'Tarde',
+  noite: 'Noite',
+}
+
+export const TIPO_MOVIMENTO_LABEL: Record<TipoMovimento, string> = {
+  pagamento: 'Pagamento',
+  pagamento_parcial: 'Pagamento parcial',
+  estorno: 'Estorno',
+  ajuste: 'Ajuste',
+  custo_extra: 'Custo extra',
 }

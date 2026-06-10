@@ -11,15 +11,12 @@ import { useToast } from '@/contexts/ToastContext'
 import { listMovimentos, registrarMovimento } from '@/services/financeiro'
 import { listOrdens } from '@/services/ordens'
 import type { MovimentoFinanceiro, OrdemProducao, TipoMovimento } from '@/types'
-import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
-
-const TIPO_MOVIMENTO_LABEL: Record<TipoMovimento, string> = {
-  pagamento: 'Pagamento',
-  pagamento_parcial: 'Pagamento parcial',
-  estorno: 'Estorno',
-  ajuste: 'Ajuste',
-  custo_extra: 'Custo extra',
-}
+import {
+  formatCurrency,
+  formatDate,
+  formatOpCode,
+  TIPO_MOVIMENTO_LABEL,
+} from '@/utils/format'
 
 const TIPO_MOVIMENTO_TONE: Record<TipoMovimento, 'green' | 'blue' | 'red' | 'gray' | 'orange'> = {
   pagamento: 'green',

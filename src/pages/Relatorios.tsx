@@ -3,18 +3,13 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Input from '@/components/Input'
 import Select from '@/components/Select'
+import FichaOpReport from '@/components/reports/FichaOpReport'
 import PrintArea from '@/components/reports/PrintArea'
+import type { ReportParams } from '@/components/reports/types'
 import { useToast } from '@/contexts/ToastContext'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao } from '@/types'
 import { formatOpCode } from '@/utils/format'
-
-export interface ReportParams {
-  ordemId: string
-  cliente: string
-  inicio: string
-  fim: string
-}
 
 type ParamNeed = 'ordem' | 'cliente' | 'periodo'
 
@@ -26,7 +21,16 @@ interface ReportDefinition {
   component: ComponentType<{ params: ReportParams }>
 }
 
-const REPORTS: ReportDefinition[] = []
+const REPORTS: ReportDefinition[] = [
+  {
+    key: 'ficha-op',
+    label: 'Ficha de OP',
+    description:
+      'Ficha completa da ordem: dados gerais, producao, defeitos e financeiro.',
+    needs: ['ordem'],
+    component: FichaOpReport,
+  },
+]
 
 function firstDayOfMonth(): string {
   return `${new Date().toISOString().slice(0, 7)}-01`
