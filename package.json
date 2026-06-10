@@ -8,7 +8,29 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "electron:dev": "electron ."
+    "electron:dev": "electron .",
+    "electron:build": "npm run build && electron-builder --win"
+  },
+  "build": {
+    "appId": "br.com.rjusinagem.gestao",
+    "productName": "RJ Usinagem",
+    "files": [
+      "dist/**",
+      "electron/**"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
   },
   "dependencies": {
     "react": "^18.2.0",
