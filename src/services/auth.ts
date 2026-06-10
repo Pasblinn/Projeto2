@@ -63,11 +63,25 @@ function toPublicUser(user: DbUser): User {
   return publicUser
 }
 
-export async function ensureSeedUsers(): Promise<void> {
+// Single in-flight promise: React StrictMode mounts effects twice in dev,
+// and two concurrent seeds would both pass the empty check (hashing is
+// async) and insert duplicated users.
+let seedUsersPromise: Promise<void> | null = null
+
+export function ensureSeedUsers(): Promise<void> {
+  if (!seedUsersPromise) {
+    seedUsersPromise = seedUsers().finally(() => {
+      seedUsersPromise = null
+    })
+  }
+  return seedUsersPromise
+}
+
+async function seedUsers(): Promise<void> {
   if (listRows('users').length > 0) return
 
-  for (const seed of SEED_USERS) {
-    insertRow('users', {
+  const rows: DbUser[] = await Promise.all(
+    SEED_USERS.map(async (seed) => ({
       id: generateId(),
       email: seed.email,
       nome: seed.nome,
@@ -75,8 +89,12 @@ export async function ensureSeedUsers(): Promise<void> {
       password_hash: await hashPassword(seed.password),
       created_at: nowIso(),
       updated_at: nowIso(),
-    })
-  }
+    })),
+  )
+
+  // Re-check after the async hashing: another tab/window may have seeded.
+  if (listRows('users').length > 0) return
+  rows.forEach((row) => insertRow('users', row))
 }
 
 export function getSession(): LocalSession | null {
