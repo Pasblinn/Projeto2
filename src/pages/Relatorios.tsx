@@ -5,6 +5,7 @@ import Input from '@/components/Input'
 import Select from '@/components/Select'
 import FichaOpReport from '@/components/reports/FichaOpReport'
 import PrintArea from '@/components/reports/PrintArea'
+import ResumoFinanceiroReport from '@/components/reports/ResumoFinanceiroReport'
 import type { ReportParams } from '@/components/reports/types'
 import { useToast } from '@/contexts/ToastContext'
 import { listOrdens } from '@/services/ordens'
@@ -29,6 +30,13 @@ const REPORTS: ReportDefinition[] = [
       'Ficha completa da ordem: dados gerais, producao, defeitos e financeiro.',
     needs: ['ordem'],
     component: FichaOpReport,
+  },
+  {
+    key: 'resumo-financeiro',
+    label: 'Resumo Financeiro',
+    description: 'Totais e movimentos financeiros do periodo selecionado.',
+    needs: ['periodo'],
+    component: ResumoFinanceiroReport,
   },
 ]
 
