@@ -5,6 +5,7 @@ import Input from '@/components/Input'
 import Select from '@/components/Select'
 import ContasReceberReport from '@/components/reports/ContasReceberReport'
 import FichaOpReport from '@/components/reports/FichaOpReport'
+import HistoricoClienteReport from '@/components/reports/HistoricoClienteReport'
 import PrintArea from '@/components/reports/PrintArea'
 import ResumoFinanceiroReport from '@/components/reports/ResumoFinanceiroReport'
 import type { ReportParams } from '@/components/reports/types'
@@ -45,6 +46,13 @@ const REPORTS: ReportDefinition[] = [
     description: 'Snapshot das OPs com saldo em aberto e total a receber.',
     needs: [],
     component: ContasReceberReport,
+  },
+  {
+    key: 'historico-cliente',
+    label: 'Historico do Cliente',
+    description: 'Todas as OPs e pagamentos de um cliente especifico.',
+    needs: ['cliente'],
+    component: HistoricoClienteReport,
   },
 ]
 
