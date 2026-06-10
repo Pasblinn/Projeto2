@@ -1,10 +1,5 @@
 import { ReactNode } from 'react'
-import type {
-  StatusFinanceiro,
-  StatusOrcamento,
-  StatusPonto,
-  StatusProducao,
-} from '@/types'
+import type { StatusFinanceiro, StatusOrcamento, StatusProducao } from '@/types'
 
 type Tone = 'gray' | 'green' | 'red' | 'yellow' | 'blue' | 'purple' | 'orange'
 
@@ -41,17 +36,10 @@ const ORCAMENTO_MAP: Record<StatusOrcamento, { tone: Tone; label: string }> = {
   reprovado: { tone: 'red', label: 'Reprovado' },
 }
 
-const PONTO_MAP: Record<StatusPonto, { tone: Tone; label: string }> = {
-  aberto: { tone: 'yellow', label: 'Aberto' },
-  fechado: { tone: 'green', label: 'Fechado' },
-  ajustado: { tone: 'purple', label: 'Ajustado' },
-}
-
 type StatusBadgeProps =
   | { kind: 'producao'; status: StatusProducao; children?: never }
   | { kind: 'financeiro'; status: StatusFinanceiro; children?: never }
   | { kind: 'orcamento'; status: StatusOrcamento; children?: never }
-  | { kind: 'ponto'; status: StatusPonto; children?: never }
   | { kind: 'custom'; tone: Tone; children: ReactNode; status?: never }
 
 function StatusBadge(props: StatusBadgeProps) {
@@ -67,9 +55,6 @@ function StatusBadge(props: StatusBadgeProps) {
       break
     case 'orcamento':
       ({ tone, label } = ORCAMENTO_MAP[props.status])
-      break
-    case 'ponto':
-      ({ tone, label } = PONTO_MAP[props.status])
       break
     case 'custom':
       tone = props.tone

@@ -11,7 +11,6 @@ import OrdemDetalhes from '@/pages/OrdemDetalhes'
 import Producao from '@/pages/Producao'
 import Financeiro from '@/pages/Financeiro'
 import Relatorios from '@/pages/Relatorios'
-import Ponto from '@/pages/Ponto'
 import Forbidden from '@/pages/Forbidden'
 import NotFound from '@/pages/NotFound'
 
@@ -54,14 +53,6 @@ function App() {
                 element={
                   <RoleGuard allow="financeiro" fallback="/403">
                     <Relatorios />
-                  </RoleGuard>
-                }
-              />
-              <Route
-                path="/ponto"
-                element={
-                  <RoleGuard allow={['financeiro', 'chefe']} fallback="/403">
-                    <Ponto />
                   </RoleGuard>
                 }
               />

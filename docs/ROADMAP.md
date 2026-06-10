@@ -102,15 +102,10 @@ Relatorios imprimiveis em formato A4.
 - [ ] `feat: add Producao por Periodo report`
 - [ ] `feat: add OPs por Status report`
 
-## Fase 9 - Ponto Eletronico
+## Fase 9 - Ponto Eletronico (removida do escopo)
 
-Sistema de ponto com interface desktop e mobile.
-
-- [ ] `feat: add funcionarios_ponto and registro_ponto tables`
-- [ ] `feat: add RPC functions (bater_ponto, etc.)`
-- [ ] `feat: add PontoTab desktop component`
-- [ ] `feat: add PontoMobile page with token auth`
-- [ ] `feat: add horas por periodo report`
+O modulo de ponto eletronico foi removido do escopo do projeto.
+O sistema cobre apenas gestao de OPs, producao e financeiro.
 
 ## Fase 10 - Electron
 
@@ -125,7 +120,6 @@ Empacotamento como aplicacao desktop para Windows.
 
 - [ ] `docs: add user manual (MANUAL_USUARIO.md)`
 - [ ] `docs: add deployment checklist (PROXIMOS_PASSOS.md)`
-- [ ] `docs: add ponto eletronico guide (PONTO.md)`
 
 ## Convencoes
 

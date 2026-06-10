@@ -22,7 +22,6 @@ const NAV_ITEMS: NavItem[] = [
   { key: 'producao', label: 'Registrar Producao', icon: 'P', roles: ['chefe', 'financeiro'] },
   { key: 'financeiro', label: 'Financeiro', icon: 'F', roles: ['financeiro'] },
   { key: 'relatorios', label: 'Relatorios', icon: 'R', roles: ['financeiro'] },
-  { key: 'ponto', label: 'Ponto Eletronico', icon: 'T', roles: ['financeiro', 'chefe'] },
 ]
 
 const ROLE_LABEL: Record<UserRole, string> = {

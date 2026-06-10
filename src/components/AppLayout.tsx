@@ -8,7 +8,6 @@ const ROUTE_KEYS: Record<string, string> = {
   '/producao': 'producao',
   '/financeiro': 'financeiro',
   '/relatorios': 'relatorios',
-  '/ponto': 'ponto',
 }
 
 const KEY_TO_ROUTE: Record<string, string> = Object.fromEntries(

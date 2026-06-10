@@ -128,30 +128,3 @@ export interface MovimentoFinanceiro {
   registrado_por?: string | null
   created_at: string
 }
-
-export interface FuncionarioPonto {
-  id: string
-  nome: string
-  cargo?: string | null
-  ponto_token: string
-  ativo: boolean
-  created_at: string
-  updated_at: string
-}
-
-export type StatusPonto = 'aberto' | 'fechado' | 'ajustado'
-export type OrigemPonto = 'mobile' | 'desktop' | 'ajuste'
-
-export interface RegistroPonto {
-  id: string
-  funcionario_id: string
-  data: string
-  hora_entrada?: string | null
-  hora_saida?: string | null
-  total_minutos?: number | null
-  status: StatusPonto
-  origem: OrigemPonto
-  observacao?: string | null
-  created_at: string
-  updated_at: string
-}

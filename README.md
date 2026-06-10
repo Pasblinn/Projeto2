@@ -1,7 +1,7 @@
 # RJ Usinagem - Sistema de Gestao de Producao
 
-Sistema desktop para gestao de Ordens de Producao (OPs), controle financeiro e
-ponto eletronico da RJ Usinagem.
+Sistema desktop para gestao de Ordens de Producao (OPs) e controle
+financeiro da RJ Usinagem.
 
 ## Visao Geral
 
@@ -17,7 +17,6 @@ visual, ideal para usuarios sem experiencia previa com sistemas ERP.
 - 3 niveis de permissao: Financeiro, Chefe e Operador
 - Gestao de Ordens de Producao do orcamento ao pagamento
 - Controle financeiro com relatorios imprimiveis em A4
-- Ponto eletronico mobile (sem login, via token unico)
 
 ## Stack Tecnica
 
@@ -94,7 +93,7 @@ Fases planejadas:
 6. **Registro de Producao** - Producao diaria, defeitos
 7. **Modulo Financeiro** - Orcamentos, contas a receber, faturamento
 8. **Relatorios** - 6 tipos imprimiveis em A4
-9. **Ponto Eletronico** - Desktop + Mobile (via token)
+9. ~~Ponto Eletronico~~ - removido do escopo
 10. **Electron** - App desktop para Windows
 11. **Documentacao Final** - Manual do usuario, deploy
 
