@@ -82,6 +82,12 @@ export interface RegistroProducao {
   created_at: string
 }
 
+export type NovoRegistroProducao = Pick<
+  RegistroProducao,
+  'ordem_producao_id' | 'data' | 'turno' | 'quantidade_produzida' | 'pecas_defeituosas'
+> &
+  Partial<Pick<RegistroProducao, 'observacoes'>>
+
 export interface RegistroDefeito {
   id: string
   ordem_producao_id: string
