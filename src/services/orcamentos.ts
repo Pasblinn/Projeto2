@@ -8,7 +8,8 @@ import {
   nowIso,
   updateRow,
 } from '@/services/db'
-import type { NovoOrcamento, Orcamento, StatusOrcamento } from '@/types'
+import { createOrdem } from '@/services/ordens'
+import type { NovoOrcamento, Orcamento, OrdemProducao, StatusOrcamento } from '@/types'
 
 const COLLECTION = 'orcamentos'
 
@@ -63,6 +64,38 @@ export async function updateStatusOrcamento(
   status: StatusOrcamento,
 ): Promise<Orcamento> {
   return updateRow(COLLECTION, id, { status, updated_at: nowIso() })
+}
+
+export async function converterEmOrdem(
+  id: string,
+  criadaPor: string,
+): Promise<OrdemProducao> {
+  const orcamento = await getOrcamento(id)
+  if (orcamento.status !== 'aprovado') {
+    throw new Error('Apenas orcamentos aprovados podem virar OP')
+  }
+  if (orcamento.ordem_producao_id) {
+    throw new Error('Orcamento ja foi convertido em OP')
+  }
+
+  const ordem = await createOrdem(
+    {
+      tipo: 'encomenda',
+      cliente: orcamento.cliente,
+      descricao: `${orcamento.peca} (origem: ${orcamento.codigo})`,
+      quantidade: orcamento.quantidade,
+      valor_total: orcamento.valor_estimado,
+      observacoes: orcamento.observacoes ?? null,
+    },
+    criadaPor,
+  )
+
+  updateRow(COLLECTION, id, {
+    ordem_producao_id: ordem.id,
+    updated_at: nowIso(),
+  })
+
+  return ordem
 }
 
 export async function deleteOrcamento(id: string): Promise<void> {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Modal from '@/components/Modal'
@@ -7,12 +8,14 @@ import OrcamentoForm from '@/components/financeiro/OrcamentoForm'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import {
+  converterEmOrdem,
   createOrcamento,
   deleteOrcamento,
   listOrcamentos,
   updateOrcamento,
   updateStatusOrcamento,
 } from '@/services/orcamentos'
+import { formatOpCode } from '@/utils/format'
 import type { NovoOrcamento, Orcamento, StatusOrcamento } from '@/types'
 import { formatCurrency, formatDate } from '@/utils/format'
 
@@ -31,6 +34,7 @@ const STATUS_ACTION_LABEL: Record<StatusOrcamento, string> = {
 function OrcamentosTab() {
   const { user } = useAuth()
   const toast = useToast()
+  const navigate = useNavigate()
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([])
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
@@ -86,6 +90,18 @@ function OrcamentosTab() {
       await load()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Falha ao atualizar status'
+      toast.error(message)
+    }
+  }
+
+  async function handleConverter(orcamento: Orcamento) {
+    if (!user) return
+    try {
+      const ordem = await converterEmOrdem(orcamento.id, user.id)
+      toast.success(`${orcamento.codigo} convertido em ${formatOpCode(ordem.numero)}`)
+      navigate(`/ordens/${ordem.id}`)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Falha ao converter orcamento'
       toast.error(message)
     }
   }
@@ -154,6 +170,27 @@ function OrcamentosTab() {
                     <td className="px-4 py-3">{formatDate(orcamento.created_at)}</td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
+                        {orcamento.status === 'aprovado' &&
+                          !orcamento.ordem_producao_id && (
+                            <Button
+                              variant="success"
+                              size="sm"
+                              onClick={() => handleConverter(orcamento)}
+                            >
+                              Converter em OP
+                            </Button>
+                          )}
+                        {orcamento.ordem_producao_id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              navigate(`/ordens/${orcamento.ordem_producao_id}`)
+                            }
+                          >
+                            Ver OP
+                          </Button>
+                        )}
                         {(STATUS_FLOW[orcamento.status] ?? []).map((next) => (
                           <Button
                             key={next}
