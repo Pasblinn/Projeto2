@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import DashboardTab from '@/components/financeiro/DashboardTab'
+import OrcamentosTab from '@/components/financeiro/OrcamentosTab'
 
 export type FinanceiroTab =
   | 'dashboard'
@@ -58,9 +59,7 @@ function Financeiro() {
       </div>
 
       {tab === 'dashboard' && <DashboardTab />}
-      {tab === 'orcamentos' && (
-        <Placeholder>CRUD de orcamentos sera implementado em breve.</Placeholder>
-      )}
+      {tab === 'orcamentos' && <OrcamentosTab />}
       {tab === 'contas' && (
         <Placeholder>Contas a receber sera implementado em breve.</Placeholder>
       )}

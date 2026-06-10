@@ -123,6 +123,12 @@ export interface Orcamento {
   updated_at: string
 }
 
+export type NovoOrcamento = Pick<
+  Orcamento,
+  'cliente' | 'peca' | 'quantidade' | 'valor_estimado'
+> &
+  Partial<Pick<Orcamento, 'status' | 'observacoes'>>
+
 export type TipoMovimento =
   | 'pagamento'
   | 'pagamento_parcial'
