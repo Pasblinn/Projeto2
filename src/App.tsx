@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ToastProvider } from '@/contexts/ToastContext'
 import ToastContainer from '@/components/Toast'
@@ -15,8 +15,10 @@ import Forbidden from '@/pages/Forbidden'
 import NotFound from '@/pages/NotFound'
 
 function App() {
+  // HashRouter: in the packaged Electron app the page loads via file://,
+  // where history-based routing (BrowserRouter) cannot resolve paths.
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ToastProvider>
         <AuthProvider>
           <Routes>
@@ -65,7 +67,7 @@ function App() {
           <ToastContainer />
         </AuthProvider>
       </ToastProvider>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
