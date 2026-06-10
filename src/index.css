@@ -218,3 +218,19 @@
 .print-only {
   display: none;
 }
+
+/* O conteudo do relatorio eh renderizado via portal em #print-root;
+   na impressao apenas ele aparece, escondendo o app inteiro. */
+#print-root {
+  display: none;
+}
+
+@media print {
+  #root {
+    display: none !important;
+  }
+
+  #print-root {
+    display: block;
+  }
+}
