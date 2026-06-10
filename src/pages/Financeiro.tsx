@@ -1,9 +1,10 @@
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import ContasReceberTab from '@/components/financeiro/ContasReceberTab'
 import DashboardTab from '@/components/financeiro/DashboardTab'
+import FaturamentoTab from '@/components/financeiro/FaturamentoTab'
 import MovimentosTab from '@/components/financeiro/MovimentosTab'
 import OrcamentosTab from '@/components/financeiro/OrcamentosTab'
 
@@ -23,14 +24,6 @@ const TABS: { key: FinanceiroTab; label: string }[] = [
   { key: 'faturamento', label: 'Faturamento' },
   { key: 'relatorios', label: 'Relatorios' },
 ]
-
-function Placeholder({ children }: { children: ReactNode }) {
-  return (
-    <Card>
-      <p className="text-sm text-gray-600">{children}</p>
-    </Card>
-  )
-}
 
 function Financeiro() {
   const navigate = useNavigate()
@@ -64,9 +57,7 @@ function Financeiro() {
       {tab === 'orcamentos' && <OrcamentosTab />}
       {tab === 'contas' && <ContasReceberTab />}
       {tab === 'movimentos' && <MovimentosTab />}
-      {tab === 'faturamento' && (
-        <Placeholder>Faturamento sera implementado em breve.</Placeholder>
-      )}
+      {tab === 'faturamento' && <FaturamentoTab />}
       {tab === 'relatorios' && (
         <Card title="Relatorios">
           <p className="mb-4 text-sm text-gray-600">

@@ -146,3 +146,14 @@ export interface MovimentoFinanceiro {
   registrado_por?: string | null
   created_at: string
 }
+
+export interface NotaFiscal {
+  id: string
+  numero: number
+  ordem_producao_id: string
+  valor: number
+  data_emissao: string
+  observacoes?: string | null
+  emitida_por?: string | null
+  created_at: string
+}

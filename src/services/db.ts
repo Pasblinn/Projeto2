@@ -1,5 +1,6 @@
 import type {
   MovimentoFinanceiro,
+  NotaFiscal,
   Orcamento,
   OrdemProducao,
   RegistroDefeito,
@@ -24,11 +25,13 @@ export interface DatabaseSchema {
   registros_defeito: RegistroDefeito[]
   orcamentos: Orcamento[]
   movimentos_financeiros: MovimentoFinanceiro[]
+  notas_fiscais: NotaFiscal[]
 }
 
 export interface DatabaseCounters {
   ordem_numero: number
   orcamento_codigo: number
+  nota_numero: number
 }
 
 interface DatabaseFile {
@@ -50,10 +53,12 @@ function emptyDatabase(): DatabaseFile {
       registros_defeito: [],
       orcamentos: [],
       movimentos_financeiros: [],
+      notas_fiscais: [],
     },
     counters: {
       ordem_numero: 0,
       orcamento_codigo: 0,
+      nota_numero: 0,
     },
   }
 }
