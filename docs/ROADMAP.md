@@ -90,17 +90,17 @@ Controle financeiro completo (6 abas).
 - [x] `feat: add OPs e Financeiro tab with ledger history`
 - [x] `feat: add Faturamento tab with NF issuance`
 
-## Fase 8 - Relatorios
+## Fase 8 - Relatorios (concluida)
 
 Relatorios imprimiveis em formato A4.
 
-- [ ] `feat: add Relatorios tab`
-- [ ] `feat: add Ficha de OP report`
-- [ ] `feat: add Resumo Financeiro report`
-- [ ] `feat: add Contas a Receber report`
-- [ ] `feat: add Historico do Cliente report`
-- [ ] `feat: add Producao por Periodo report`
-- [ ] `feat: add OPs por Status report`
+- [x] `feat: add Relatorios tab`
+- [x] `feat: add Ficha de OP report`
+- [x] `feat: add Resumo Financeiro report`
+- [x] `feat: add Contas a Receber report`
+- [x] `feat: add Historico do Cliente report`
+- [x] `feat: add Producao por Periodo report`
+- [x] `feat: add OPs por Status report`
 
 ## Fase 9 - Ponto Eletronico (removida do escopo)
 
