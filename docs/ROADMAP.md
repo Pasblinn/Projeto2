@@ -3,7 +3,7 @@
 Plano de construcao incremental do sistema. Cada fase eh composta por
 commits pequenos e independentes, seguindo Conventional Commits.
 
-## Fase 1 - Fundacao (em andamento)
+## Fase 1 - Fundacao (concluida)
 
 Setup inicial do projeto: ferramentas de build, linguagem e estilizacao.
 
@@ -117,10 +117,16 @@ Empacotamento como aplicacao desktop para Windows.
 - [x] `chore: add app icons`
 - [x] `docs: add build and distribution instructions`
 
-## Fase 11 - Documentacao Final
+## Fase 11 - Documentacao Final (concluida)
 
-- [ ] `docs: add user manual (MANUAL_USUARIO.md)`
-- [ ] `docs: add deployment checklist (PROXIMOS_PASSOS.md)`
+- [x] `docs: add user manual (MANUAL_USUARIO.md)`
+- [x] `docs: add deployment checklist (PROXIMOS_PASSOS.md)`
+
+## Status do Projeto
+
+Todas as fases do escopo foram concluidas. O sistema cobre gestao de
+OPs, registro de producao, financeiro completo, relatorios A4 e
+empacotamento desktop, com banco de dados 100% local.
 
 ## Convencoes
 

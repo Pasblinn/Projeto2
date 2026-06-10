@@ -86,10 +86,10 @@ import { listRows } from '@/services/db'
 
 ## Roadmap de Desenvolvimento
 
-O projeto esta sendo construido de forma incremental, commit por commit.
-Fases planejadas:
+O projeto foi construido de forma incremental, commit por commit.
+Fases concluidas:
 
-1. **Fundacao** (atual) - Vite, TypeScript, Tailwind, aliases
+1. **Fundacao** - Vite, TypeScript, Tailwind, aliases
 2. **Design System** - Componentes base (Button, Input, Card, Modal, Toast)
 3. **Banco Local + Auth** - Persistencia local, contexto de autenticacao, login
 4. **Layout e Rotas** - Layout autenticado, rotas protegidas
