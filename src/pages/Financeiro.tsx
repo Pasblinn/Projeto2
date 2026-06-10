@@ -2,6 +2,7 @@ import { ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import ContasReceberTab from '@/components/financeiro/ContasReceberTab'
 import DashboardTab from '@/components/financeiro/DashboardTab'
 import OrcamentosTab from '@/components/financeiro/OrcamentosTab'
 
@@ -60,9 +61,7 @@ function Financeiro() {
 
       {tab === 'dashboard' && <DashboardTab />}
       {tab === 'orcamentos' && <OrcamentosTab />}
-      {tab === 'contas' && (
-        <Placeholder>Contas a receber sera implementado em breve.</Placeholder>
-      )}
+      {tab === 'contas' && <ContasReceberTab />}
       {tab === 'movimentos' && (
         <Placeholder>Historico financeiro por OP sera implementado em breve.</Placeholder>
       )}

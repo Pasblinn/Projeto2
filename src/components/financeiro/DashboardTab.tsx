@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Card from '@/components/Card'
 import StatusBadge from '@/components/StatusBadge'
 import { useToast } from '@/contexts/ToastContext'
+import { saldoDevedor } from '@/services/financeiro'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao } from '@/types'
 import { formatCurrency, formatOpCode } from '@/utils/format'
@@ -26,10 +27,6 @@ function StatCard({ label, value, tone = 'default' }: StatCardProps) {
       <p className={`px-2 pb-1 text-2xl font-semibold ${valueClass}`}>{value}</p>
     </Card>
   )
-}
-
-function saldoDevedor(ordem: OrdemProducao): number {
-  return Math.max(0, (ordem.valor_total ?? 0) - ordem.valor_pago)
 }
 
 function DashboardTab() {
