@@ -1,4 +1,12 @@
-import { supabase } from '@/services/supabase'
+import {
+  findRow,
+  generateId,
+  insertRow,
+  listRows,
+  nextCounter,
+  nowIso,
+  updateRow,
+} from '@/services/db'
 import type {
   AtualizaOrdemProducao,
   NovaOrdemProducao,
@@ -6,100 +14,74 @@ import type {
   StatusProducao,
 } from '@/types'
 
-const TABLE = 'ordens_producao'
-
-const SELECT_COLUMNS =
-  'id, numero, tipo, cliente, descricao, quantidade, quantidade_produzida, ' +
-  'data_entrega, status_producao, status_financeiro, forma_pagamento, ' +
-  'valor_total, valor_pago, observacoes, aprovada, aprovada_por, aprovada_em, ' +
-  'criada_por, created_at, updated_at'
+const COLLECTION = 'ordens_producao'
 
 export async function listOrdens(): Promise<OrdemProducao[]> {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .select(SELECT_COLUMNS)
-    .order('numero', { ascending: false })
-    .returns<OrdemProducao[]>()
-
-  if (error) throw new Error(error.message)
-  return data ?? []
-}
-
-export async function updateStatusProducao(
-  id: string,
-  status: StatusProducao,
-): Promise<OrdemProducao> {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .update({ status_producao: status })
-    .eq('id', id)
-    .select(SELECT_COLUMNS)
-    .single()
-    .returns<OrdemProducao>()
-
-  if (error) throw new Error(error.message)
-  return data
-}
-
-export async function aprovarOrdem(
-  id: string,
-  aprovadaPor: string,
-): Promise<OrdemProducao> {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .update({
-      aprovada: true,
-      aprovada_por: aprovadaPor,
-      aprovada_em: new Date().toISOString(),
-    })
-    .eq('id', id)
-    .select(SELECT_COLUMNS)
-    .single()
-    .returns<OrdemProducao>()
-
-  if (error) throw new Error(error.message)
-  return data
+  return [...listRows(COLLECTION)].sort((a, b) => b.numero - a.numero)
 }
 
 export async function getOrdem(id: string): Promise<OrdemProducao> {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .select(SELECT_COLUMNS)
-    .eq('id', id)
-    .single()
-    .returns<OrdemProducao>()
-
-  if (error) throw new Error(error.message)
-  return data
+  const ordem = findRow(COLLECTION, id)
+  if (!ordem) {
+    throw new Error('Ordem de producao nao encontrada')
+  }
+  return ordem
 }
 
 export async function createOrdem(
   input: NovaOrdemProducao,
   criadaPor: string,
 ): Promise<OrdemProducao> {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .insert({ ...input, criada_por: criadaPor })
-    .select(SELECT_COLUMNS)
-    .single()
-    .returns<OrdemProducao>()
-
-  if (error) throw new Error(error.message)
-  return data
+  const timestamp = nowIso()
+  return insertRow(COLLECTION, {
+    id: generateId(),
+    numero: nextCounter('ordem_numero'),
+    tipo: input.tipo,
+    cliente: input.cliente,
+    descricao: input.descricao,
+    quantidade: input.quantidade,
+    quantidade_produzida: 0,
+    data_entrega: input.data_entrega ?? null,
+    status_producao: 'criada',
+    status_financeiro: 'pendente',
+    forma_pagamento: input.forma_pagamento ?? null,
+    valor_total: input.valor_total ?? null,
+    valor_pago: 0,
+    observacoes: input.observacoes ?? null,
+    aprovada: false,
+    aprovada_por: null,
+    aprovada_em: null,
+    criada_por: criadaPor,
+    created_at: timestamp,
+    updated_at: timestamp,
+  })
 }
 
 export async function updateOrdem(
   id: string,
   input: AtualizaOrdemProducao,
 ): Promise<OrdemProducao> {
-  const { data, error } = await supabase
-    .from(TABLE)
-    .update(input)
-    .eq('id', id)
-    .select(SELECT_COLUMNS)
-    .single()
-    .returns<OrdemProducao>()
+  return updateRow(COLLECTION, id, { ...input, updated_at: nowIso() })
+}
 
-  if (error) throw new Error(error.message)
-  return data
+export async function updateStatusProducao(
+  id: string,
+  status: StatusProducao,
+): Promise<OrdemProducao> {
+  return updateRow(COLLECTION, id, {
+    status_producao: status,
+    updated_at: nowIso(),
+  })
+}
+
+export async function aprovarOrdem(
+  id: string,
+  aprovadaPor: string,
+): Promise<OrdemProducao> {
+  return updateRow(COLLECTION, id, {
+    aprovada: true,
+    aprovada_por: aprovadaPor,
+    aprovada_em: nowIso(),
+    updated_at: nowIso(),
+  })
 }
