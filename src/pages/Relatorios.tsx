@@ -6,6 +6,7 @@ import Select from '@/components/Select'
 import ContasReceberReport from '@/components/reports/ContasReceberReport'
 import FichaOpReport from '@/components/reports/FichaOpReport'
 import HistoricoClienteReport from '@/components/reports/HistoricoClienteReport'
+import OpsPorStatusReport from '@/components/reports/OpsPorStatusReport'
 import PrintArea from '@/components/reports/PrintArea'
 import ProducaoPeriodoReport from '@/components/reports/ProducaoPeriodoReport'
 import ResumoFinanceiroReport from '@/components/reports/ResumoFinanceiroReport'
@@ -61,6 +62,13 @@ const REPORTS: ReportDefinition[] = [
     description: 'Producao registrada no periodo, resumida por OP e detalhada.',
     needs: ['periodo'],
     component: ProducaoPeriodoReport,
+  },
+  {
+    key: 'ops-status',
+    label: 'OPs por Status',
+    description: 'Visao geral das OPs agrupadas por status de producao.',
+    needs: [],
+    component: OpsPorStatusReport,
   },
 ]
 
