@@ -4,6 +4,7 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import ContasReceberTab from '@/components/financeiro/ContasReceberTab'
 import DashboardTab from '@/components/financeiro/DashboardTab'
+import MovimentosTab from '@/components/financeiro/MovimentosTab'
 import OrcamentosTab from '@/components/financeiro/OrcamentosTab'
 
 export type FinanceiroTab =
@@ -62,9 +63,7 @@ function Financeiro() {
       {tab === 'dashboard' && <DashboardTab />}
       {tab === 'orcamentos' && <OrcamentosTab />}
       {tab === 'contas' && <ContasReceberTab />}
-      {tab === 'movimentos' && (
-        <Placeholder>Historico financeiro por OP sera implementado em breve.</Placeholder>
-      )}
+      {tab === 'movimentos' && <MovimentosTab />}
       {tab === 'faturamento' && (
         <Placeholder>Faturamento sera implementado em breve.</Placeholder>
       )}
