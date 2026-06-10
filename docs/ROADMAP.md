@@ -78,17 +78,17 @@ Registro diario de producao e defeitos.
 - [x] `feat: add accumulated production progress bar`
 - [x] `feat: add defect registration with cause and action`
 
-## Fase 7 - Modulo Financeiro
+## Fase 7 - Modulo Financeiro (concluida)
 
 Controle financeiro completo (6 abas).
 
-- [ ] `feat: add Financeiro page skeleton with tabs`
-- [ ] `feat: add Dashboard financeiro tab`
-- [ ] `feat: add Orcamentos tab with CRUD`
-- [ ] `feat: add orcamento to OP conversion`
-- [ ] `feat: add Contas a Receber tab with payment tracking`
-- [ ] `feat: add OPs e Financeiro tab with ledger history`
-- [ ] `feat: add Faturamento tab with NF issuance`
+- [x] `feat: add Financeiro page skeleton with tabs`
+- [x] `feat: add Dashboard financeiro tab`
+- [x] `feat: add Orcamentos tab with CRUD`
+- [x] `feat: add orcamento to OP conversion`
+- [x] `feat: add Contas a Receber tab with payment tracking`
+- [x] `feat: add OPs e Financeiro tab with ledger history`
+- [x] `feat: add Faturamento tab with NF issuance`
 
 ## Fase 8 - Relatorios
 
