@@ -7,6 +7,7 @@ import ContasReceberReport from '@/components/reports/ContasReceberReport'
 import FichaOpReport from '@/components/reports/FichaOpReport'
 import HistoricoClienteReport from '@/components/reports/HistoricoClienteReport'
 import PrintArea from '@/components/reports/PrintArea'
+import ProducaoPeriodoReport from '@/components/reports/ProducaoPeriodoReport'
 import ResumoFinanceiroReport from '@/components/reports/ResumoFinanceiroReport'
 import type { ReportParams } from '@/components/reports/types'
 import { useToast } from '@/contexts/ToastContext'
@@ -53,6 +54,13 @@ const REPORTS: ReportDefinition[] = [
     description: 'Todas as OPs e pagamentos de um cliente especifico.',
     needs: ['cliente'],
     component: HistoricoClienteReport,
+  },
+  {
+    key: 'producao-periodo',
+    label: 'Producao por Periodo',
+    description: 'Producao registrada no periodo, resumida por OP e detalhada.',
+    needs: ['periodo'],
+    component: ProducaoPeriodoReport,
   },
 ]
 
