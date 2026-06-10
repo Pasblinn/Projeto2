@@ -3,6 +3,7 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Input from '@/components/Input'
 import Select from '@/components/Select'
+import ContasReceberReport from '@/components/reports/ContasReceberReport'
 import FichaOpReport from '@/components/reports/FichaOpReport'
 import PrintArea from '@/components/reports/PrintArea'
 import ResumoFinanceiroReport from '@/components/reports/ResumoFinanceiroReport'
@@ -37,6 +38,13 @@ const REPORTS: ReportDefinition[] = [
     description: 'Totais e movimentos financeiros do periodo selecionado.',
     needs: ['periodo'],
     component: ResumoFinanceiroReport,
+  },
+  {
+    key: 'contas-receber',
+    label: 'Contas a Receber',
+    description: 'Snapshot das OPs com saldo em aberto e total a receber.',
+    needs: [],
+    component: ContasReceberReport,
   },
 ]
 
