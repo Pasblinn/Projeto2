@@ -48,10 +48,14 @@ npm install
 ## Scripts Disponiveis
 
 ```bash
-npm run dev        # Inicia o servidor de desenvolvimento em localhost:5173
-npm run build      # Build de producao (type check + Vite build)
-npm run preview    # Preview do build de producao
+npm run dev             # Inicia o servidor de desenvolvimento em localhost:5173
+npm run build           # Build de producao (type check + Vite build)
+npm run preview         # Preview do build de producao
+npm run electron:dev    # Janela Electron apontando para o dev server
+npm run electron:build  # Gera instalador Windows em release/
 ```
+
+Ver [docs/BUILD.md](docs/BUILD.md) para detalhes de build e distribuicao.
 
 ## Estrutura do Projeto
 

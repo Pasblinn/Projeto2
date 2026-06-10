@@ -107,14 +107,15 @@ Relatorios imprimiveis em formato A4.
 O modulo de ponto eletronico foi removido do escopo do projeto.
 O sistema cobre apenas gestao de OPs, producao e financeiro.
 
-## Fase 10 - Electron
+## Fase 10 - Electron (concluida)
 
 Empacotamento como aplicacao desktop para Windows.
 
-- [ ] `chore: add Electron main and preload scripts`
-- [ ] `chore: configure electron-builder for Windows installer`
-- [ ] `chore: add app icons`
-- [ ] `docs: add build and distribution instructions`
+- [x] `chore: add Electron main and preload scripts`
+- [x] `fix: use HashRouter for file protocol compatibility in Electron`
+- [x] `chore: configure electron-builder for Windows installer`
+- [x] `chore: add app icons`
+- [x] `docs: add build and distribution instructions`
 
 ## Fase 11 - Documentacao Final
 
