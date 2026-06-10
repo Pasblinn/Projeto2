@@ -4,6 +4,7 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import OrdemForm from '@/components/OrdemForm'
+import ProgressBar from '@/components/ProgressBar'
 import StatusBadge from '@/components/StatusBadge'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
@@ -190,6 +191,14 @@ function OrdemDetalhes() {
             {ordem.forma_pagamento ? FORMA_PAGAMENTO_LABEL[ordem.forma_pagamento] : '—'}
           </Field>
         </dl>
+
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <ProgressBar
+            label="Producao acumulada"
+            value={ordem.quantidade_produzida}
+            max={ordem.quantidade}
+          />
+        </div>
 
         <div className="mt-4 border-t border-gray-100 pt-4">
           <Field label="Descricao">{ordem.descricao}</Field>

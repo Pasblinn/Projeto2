@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Input from '@/components/Input'
+import ProgressBar from '@/components/ProgressBar'
 import Select from '@/components/Select'
 import Textarea from '@/components/Textarea'
 import { useAuth } from '@/contexts/AuthContext'
@@ -146,6 +147,14 @@ function Producao() {
               value={ordemId}
               onChange={(e) => setOrdemId(e.target.value)}
             />
+
+            {ordemId && ordensById.get(ordemId) && (
+              <ProgressBar
+                label="Producao acumulada"
+                value={ordensById.get(ordemId)!.quantidade_produzida}
+                max={ordensById.get(ordemId)!.quantidade}
+              />
+            )}
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
