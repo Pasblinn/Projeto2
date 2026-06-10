@@ -100,6 +100,12 @@ export interface RegistroDefeito {
   created_at: string
 }
 
+export type NovoRegistroDefeito = Pick<
+  RegistroDefeito,
+  'ordem_producao_id' | 'data' | 'quantidade' | 'tipo_defeito'
+> &
+  Partial<Pick<RegistroDefeito, 'causa_provavel' | 'acao_corretiva'>>
+
 export type StatusOrcamento = 'rascunho' | 'enviado' | 'aprovado' | 'reprovado'
 
 export interface Orcamento {

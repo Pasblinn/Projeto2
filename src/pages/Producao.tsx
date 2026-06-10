@@ -1,6 +1,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import DefeitosCard from '@/components/DefeitosCard'
 import Input from '@/components/Input'
 import ProgressBar from '@/components/ProgressBar'
 import Select from '@/components/Select'
@@ -206,6 +207,8 @@ function Producao() {
           </form>
         )}
       </Card>
+
+      <DefeitosCard ordens={ordensAtivas} />
 
       <Card title="Ultimos Registros" padding="none">
         {registros.length === 0 ? (
