@@ -5,14 +5,14 @@ ponto eletronico da RJ Usinagem.
 
 ## Visao Geral
 
-Aplicacao completa de gestao industrial desenvolvida com React, TypeScript e
-Supabase. Projetada para ser simples e visual, ideal para usuarios sem
-experiencia previa com sistemas ERP.
+Aplicacao completa de gestao industrial desenvolvida com React e TypeScript,
+com banco de dados local (sem backend remoto). Projetada para ser simples e
+visual, ideal para usuarios sem experiencia previa com sistemas ERP.
 
 ### Caracteristicas
 
-- Desktop app para Windows (via Electron, a partir da Fase 2)
-- Banco de dados remoto compartilhado (PostgreSQL + Supabase)
+- Desktop app para Windows (via Electron)
+- Banco de dados local (localStorage), funciona 100% offline
 - Interface limpa com Tailwind CSS
 - 3 niveis de permissao: Financeiro, Chefe e Operador
 - Gestao de Ordens de Producao do orcamento ao pagamento
@@ -30,7 +30,8 @@ experiencia previa com sistemas ERP.
 | PostCSS          | 8.4    | Processamento de CSS             |
 
 Dependencias adicionais serao introduzidas em commits subsequentes:
-React Router, Supabase Client, Electron, Lucide React, date-fns, jsPDF, etc.
+React Router, Electron, etc. Ver [docs/DATABASE.md](docs/DATABASE.md) para
+detalhes do banco de dados local.
 
 ## Pre-requisitos
 
@@ -77,7 +78,7 @@ Imports limpos usando `@/` como atalho para `src/`:
 
 ```ts
 import Button from '@/components/Button'
-import { supabase } from '@/services/supabase'
+import { listRows } from '@/services/db'
 ```
 
 ## Roadmap de Desenvolvimento
@@ -87,7 +88,7 @@ Fases planejadas:
 
 1. **Fundacao** (atual) - Vite, TypeScript, Tailwind, aliases
 2. **Design System** - Componentes base (Button, Input, Card, Modal, Toast)
-3. **Supabase + Auth** - Cliente, contexto de autenticacao, login
+3. **Banco Local + Auth** - Persistencia local, contexto de autenticacao, login
 4. **Layout e Rotas** - Layout autenticado, rotas protegidas
 5. **Ordens de Producao** - CRUD, aprovacao, status
 6. **Registro de Producao** - Producao diaria, defeitos

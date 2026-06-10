@@ -29,6 +29,10 @@ Componentes reutilizaveis de UI e tipos compartilhados.
 
 Integracao com backend e controle de sessao.
 
+> Nota: o Supabase foi substituido por um banco de dados local na
+> refatoracao apos a Fase 5 (ver abaixo). O sistema agora funciona
+> 100% offline.
+
 - [x] `feat: add Supabase client configuration`
 - [x] `feat: add AuthContext with session management`
 - [x] `feat: add Login page`
@@ -54,6 +58,17 @@ Modulo principal de OPs: CRUD, aprovacao e status.
 - [x] `feat: add OP approval workflow`
 - [x] `feat: add OP status controls (iniciar, pausar, finalizar)`
 - [x] `feat: add search and filter on Dashboard`
+
+## Refatoracao - Banco de Dados Local (concluida)
+
+Decisao de arquitetura: o banco de dados passa a ser local apenas
+(localStorage), eliminando a dependencia do Supabase e de internet.
+
+- [x] `feat: add local database storage layer`
+- [x] `refactor: replace Supabase auth with local auth service`
+- [x] `refactor: migrate ordens service to local database`
+- [x] `chore: remove Supabase dependency and config`
+- [x] `docs: replace Supabase guide with local database guide`
 
 ## Fase 6 - Registro de Producao
 
