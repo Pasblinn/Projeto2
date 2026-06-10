@@ -70,13 +70,13 @@ Decisao de arquitetura: o banco de dados passa a ser local apenas
 - [x] `chore: remove Supabase dependency and config`
 - [x] `docs: replace Supabase guide with local database guide`
 
-## Fase 6 - Registro de Producao
+## Fase 6 - Registro de Producao (concluida)
 
 Registro diario de producao e defeitos.
 
-- [ ] `feat: add production registration form`
-- [ ] `feat: add accumulated production progress bar`
-- [ ] `feat: add defect registration with cause and action`
+- [x] `feat: add production registration form`
+- [x] `feat: add accumulated production progress bar`
+- [x] `feat: add defect registration with cause and action`
 
 ## Fase 7 - Modulo Financeiro
 
