@@ -78,7 +78,7 @@ export function ensureSeedUsers(): Promise<void> {
 }
 
 async function seedUsers(): Promise<void> {
-  if (listRows('users').length > 0) return
+  if ((await listRows('users')).length > 0) return
 
   const rows: DbUser[] = await Promise.all(
     SEED_USERS.map(async (seed) => ({
@@ -93,8 +93,10 @@ async function seedUsers(): Promise<void> {
   )
 
   // Re-check after the async hashing: another tab/window may have seeded.
-  if (listRows('users').length > 0) return
-  rows.forEach((row) => insertRow('users', row))
+  if ((await listRows('users')).length > 0) return
+  for (const row of rows) {
+    await insertRow('users', row)
+  }
 }
 
 export function getSession(): LocalSession | null {
@@ -112,7 +114,7 @@ export async function getCurrentUser(): Promise<User | null> {
   const session = getSession()
   if (!session) return null
 
-  const user = listRows('users').find((u) => u.id === session.userId)
+  const user = (await listRows('users')).find((u) => u.id === session.userId)
   return user ? toPublicUser(user) : null
 }
 
@@ -121,7 +123,7 @@ export async function signIn(email: string, password: string): Promise<User> {
 
   const normalizedEmail = email.trim().toLowerCase()
   const passwordHash = await hashPassword(password)
-  const user = listRows('users').find(
+  const user = (await listRows('users')).find(
     (u) => u.email.toLowerCase() === normalizedEmail && u.password_hash === passwordHash,
   )
 

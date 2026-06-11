@@ -5,6 +5,11 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   base: './',
+  // PGlite carrega o runtime do PostgreSQL (WASM) em tempo de execucao;
+  // o pre-bundling do Vite quebra esse carregamento.
+  optimizeDeps: {
+    exclude: ['@electric-sql/pglite'],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

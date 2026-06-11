@@ -1,11 +1,4 @@
-import {
-  findRow,
-  generateId,
-  insertRow,
-  listRows,
-  nextCounter,
-  nowIso,
-} from '@/services/db'
+import { findRow, generateId, insertRow, nextCounter, nowIso, query } from '@/services/db'
 import type { NotaFiscal } from '@/types'
 
 const COLLECTION = 'notas_fiscais'
@@ -15,7 +8,7 @@ export function formatNotaNumero(numero: number): string {
 }
 
 export async function listNotas(): Promise<NotaFiscal[]> {
-  return [...listRows(COLLECTION)].sort((a, b) => b.numero - a.numero)
+  return query<NotaFiscal>('SELECT * FROM notas_fiscais ORDER BY numero DESC')
 }
 
 export async function emitirNota(
@@ -25,7 +18,7 @@ export async function emitirNota(
   observacoes: string | null,
   emitidaPor: string,
 ): Promise<NotaFiscal> {
-  const ordem = findRow('ordens_producao', ordemId)
+  const ordem = await findRow('ordens_producao', ordemId)
   if (!ordem) {
     throw new Error('Ordem de producao nao encontrada')
   }
@@ -33,16 +26,17 @@ export async function emitirNota(
     throw new Error('Valor da nota deve ser maior que zero')
   }
 
-  const jaEmitida = listRows(COLLECTION).some(
-    (nota) => nota.ordem_producao_id === ordemId,
+  const existentes = await query<{ id: string }>(
+    'SELECT id FROM notas_fiscais WHERE ordem_producao_id = $1',
+    [ordemId],
   )
-  if (jaEmitida) {
+  if (existentes.length > 0) {
     throw new Error('Esta OP ja possui nota fiscal emitida')
   }
 
   return insertRow(COLLECTION, {
     id: generateId(),
-    numero: nextCounter('nota_numero'),
+    numero: await nextCounter('nota_numero'),
     ordem_producao_id: ordemId,
     valor,
     data_emissao: dataEmissao,

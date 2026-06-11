@@ -3,9 +3,9 @@ import {
   findRow,
   generateId,
   insertRow,
-  listRows,
   nextCounter,
   nowIso,
+  query,
   updateRow,
 } from '@/services/db'
 import { createOrdem } from '@/services/ordens'
@@ -18,13 +18,11 @@ function formatCodigo(sequencial: number): string {
 }
 
 export async function listOrcamentos(): Promise<Orcamento[]> {
-  return [...listRows(COLLECTION)].sort((a, b) =>
-    b.created_at.localeCompare(a.created_at),
-  )
+  return query<Orcamento>('SELECT * FROM orcamentos ORDER BY created_at DESC')
 }
 
 export async function getOrcamento(id: string): Promise<Orcamento> {
-  const orcamento = findRow(COLLECTION, id)
+  const orcamento = await findRow(COLLECTION, id)
   if (!orcamento) {
     throw new Error('Orcamento nao encontrado')
   }
@@ -38,7 +36,7 @@ export async function createOrcamento(
   const timestamp = nowIso()
   return insertRow(COLLECTION, {
     id: generateId(),
-    codigo: formatCodigo(nextCounter('orcamento_codigo')),
+    codigo: formatCodigo(await nextCounter('orcamento_codigo')),
     cliente: input.cliente,
     peca: input.peca,
     quantidade: input.quantidade,
@@ -93,7 +91,7 @@ export async function converterEmOrdem(
     criadaPor,
   )
 
-  updateRow(COLLECTION, id, {
+  await updateRow(COLLECTION, id, {
     ordem_producao_id: ordem.id,
     updated_at: nowIso(),
   })
@@ -106,5 +104,5 @@ export async function deleteOrcamento(id: string): Promise<void> {
   if (orcamento.ordem_producao_id) {
     throw new Error('Orcamento ja convertido em OP nao pode ser excluido')
   }
-  deleteRow(COLLECTION, id)
+  await deleteRow(COLLECTION, id)
 }

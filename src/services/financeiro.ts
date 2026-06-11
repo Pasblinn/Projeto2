@@ -1,11 +1,4 @@
-import {
-  findRow,
-  generateId,
-  insertRow,
-  listRows,
-  nowIso,
-  updateRow,
-} from '@/services/db'
+import { findRow, generateId, insertRow, nowIso, query, updateRow } from '@/services/db'
 import type {
   MovimentoFinanceiro,
   OrdemProducao,
@@ -39,17 +32,22 @@ function statusFinanceiroFor(ordem: OrdemProducao, valorPago: number): StatusFin
 }
 
 export async function listMovimentos(ordemId?: string): Promise<MovimentoFinanceiro[]> {
-  const movimentos = listRows(COLLECTION).filter(
-    (movimento) => !ordemId || movimento.ordem_producao_id === ordemId,
+  if (ordemId) {
+    return query<MovimentoFinanceiro>(
+      'SELECT * FROM movimentos_financeiros WHERE ordem_producao_id = $1 ORDER BY created_at DESC',
+      [ordemId],
+    )
+  }
+  return query<MovimentoFinanceiro>(
+    'SELECT * FROM movimentos_financeiros ORDER BY created_at DESC',
   )
-  return movimentos.sort((a, b) => b.created_at.localeCompare(a.created_at))
 }
 
 export async function registrarMovimento(
   input: NovoMovimento,
   registradoPor: string,
 ): Promise<MovimentoFinanceiro> {
-  const ordem = findRow('ordens_producao', input.ordem_producao_id)
+  const ordem = await findRow('ordens_producao', input.ordem_producao_id)
   if (!ordem) {
     throw new Error('Ordem de producao nao encontrada')
   }
@@ -57,7 +55,7 @@ export async function registrarMovimento(
     throw new Error('Valor do movimento deve ser maior que zero')
   }
 
-  const movimento = insertRow(COLLECTION, {
+  const movimento = await insertRow(COLLECTION, {
     id: generateId(),
     ordem_producao_id: input.ordem_producao_id,
     tipo: input.tipo,
@@ -80,7 +78,7 @@ export async function registrarMovimento(
   const delta = DELTA_FACTOR[input.tipo] * input.valor
   if (delta !== 0) {
     const valorPago = Math.max(0, ordem.valor_pago + delta)
-    updateRow('ordens_producao', ordem.id, {
+    await updateRow('ordens_producao', ordem.id, {
       valor_pago: valorPago,
       status_financeiro: statusFinanceiroFor(ordem, valorPago),
       updated_at: nowIso(),
@@ -97,7 +95,7 @@ export async function registrarPagamento(
   descricao: string | null,
   registradoPor: string,
 ): Promise<MovimentoFinanceiro> {
-  const ordem = findRow('ordens_producao', ordemId)
+  const ordem = await findRow('ordens_producao', ordemId)
   if (!ordem) {
     throw new Error('Ordem de producao nao encontrada')
   }

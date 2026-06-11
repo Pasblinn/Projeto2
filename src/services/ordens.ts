@@ -3,8 +3,8 @@ import {
   findRow,
   generateId,
   insertRow,
-  listRows,
   nowIso,
+  query,
   updateRow,
 } from '@/services/db'
 import type {
@@ -17,20 +17,23 @@ import type {
 const COLLECTION = 'ordens_producao'
 
 // Mirrors the official gerar_codigo_op(): OP-<ano>-<sequencial por ano>.
-function gerarCodigo(): string {
+async function gerarCodigo(): Promise<string> {
   const ano = String(new Date().getFullYear())
   const prefixo = `OP-${ano}-`
-  const contador =
-    listRows(COLLECTION).filter((ordem) => ordem.codigo.startsWith(prefixo)).length + 1
+  const rows = await query<{ total: number }>(
+    'SELECT COUNT(*)::int AS total FROM ordens_producao WHERE codigo LIKE $1',
+    [`${prefixo}%`],
+  )
+  const contador = rows[0].total + 1
   return `${prefixo}${String(contador).padStart(4, '0')}`
 }
 
 export async function listOrdens(): Promise<OrdemProducao[]> {
-  return [...listRows(COLLECTION)].sort((a, b) => b.codigo.localeCompare(a.codigo))
+  return query<OrdemProducao>('SELECT * FROM ordens_producao ORDER BY codigo DESC')
 }
 
 export async function getOrdem(id: string): Promise<OrdemProducao> {
-  const ordem = findRow(COLLECTION, id)
+  const ordem = await findRow(COLLECTION, id)
   if (!ordem) {
     throw new Error('Ordem de producao nao encontrada')
   }
@@ -44,7 +47,7 @@ export async function createOrdem(
   const timestamp = nowIso()
   return insertRow(COLLECTION, {
     id: generateId(),
-    codigo: gerarCodigo(),
+    codigo: await gerarCodigo(),
     tipo: input.tipo,
     data_inicio: input.data_inicio,
     data_termino: input.data_termino ?? null,
@@ -137,26 +140,11 @@ export async function setPreparacaoMaquina(
 export async function deleteOrdem(id: string): Promise<void> {
   await getOrdem(id)
 
-  // Cascade: remove everything that references the OP, like the official
-  // schema does with ON DELETE CASCADE.
-  for (const registro of listRows('registros_producao')) {
-    if (registro.ordem_producao_id === id) deleteRow('registros_producao', registro.id)
-  }
-  for (const defeito of listRows('registros_defeito')) {
-    if (defeito.ordem_producao_id === id) deleteRow('registros_defeito', defeito.id)
-  }
-  for (const movimento of listRows('movimentos_financeiros')) {
-    if (movimento.ordem_producao_id === id)
-      deleteRow('movimentos_financeiros', movimento.id)
-  }
-  for (const nota of listRows('notas_fiscais')) {
-    if (nota.ordem_producao_id === id) deleteRow('notas_fiscais', nota.id)
-  }
-  for (const orcamento of listRows('orcamentos')) {
-    if (orcamento.ordem_producao_id === id) {
-      updateRow('orcamentos', orcamento.id, { ordem_producao_id: null })
-    }
-  }
-
-  deleteRow(COLLECTION, id)
+  // Unlink converted quotes; production logs, defects, payments and
+  // invoices are removed by the ON DELETE CASCADE foreign keys.
+  await query(
+    'UPDATE orcamentos SET ordem_producao_id = NULL WHERE ordem_producao_id = $1',
+    [id],
+  )
+  await deleteRow(COLLECTION, id)
 }

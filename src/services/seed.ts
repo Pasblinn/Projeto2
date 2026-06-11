@@ -31,12 +31,16 @@ function daysAhead(days: number): string {
 }
 
 export async function seedDemoData(): Promise<void> {
-  if (listRows('ordens_producao').length > 0 || listRows('orcamentos').length > 0) {
+  const [ordens, orcamentos] = await Promise.all([
+    listRows('ordens_producao'),
+    listRows('orcamentos'),
+  ])
+  if (ordens.length > 0 || orcamentos.length > 0) {
     throw new Error('O banco ja possui dados; limpe-o antes de carregar a demonstracao')
   }
 
   await ensureSeedUsers()
-  const users = listRows('users')
+  const users = await listRows('users')
   const admin = users.find((u) => u.role === 'financeiro')
   const chefe = users.find((u) => u.role === 'chefe')
   if (!admin || !chefe) {

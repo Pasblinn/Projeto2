@@ -1,11 +1,4 @@
-import {
-  findRow,
-  generateId,
-  insertRow,
-  listRows,
-  nowIso,
-  updateRow,
-} from '@/services/db'
+import { findRow, generateId, insertRow, nowIso, query, updateRow } from '@/services/db'
 import type {
   NovoRegistroDefeito,
   NovoRegistroProducao,
@@ -17,17 +10,22 @@ const COLLECTION = 'registros_producao'
 const DEFEITOS = 'registros_defeito'
 
 export async function listRegistros(ordemId?: string): Promise<RegistroProducao[]> {
-  const registros = listRows(COLLECTION).filter(
-    (registro) => !ordemId || registro.ordem_producao_id === ordemId,
+  if (ordemId) {
+    return query<RegistroProducao>(
+      'SELECT * FROM registros_producao WHERE ordem_producao_id = $1 ORDER BY data DESC, created_at DESC',
+      [ordemId],
+    )
+  }
+  return query<RegistroProducao>(
+    'SELECT * FROM registros_producao ORDER BY data DESC, created_at DESC',
   )
-  return registros.sort((a, b) => b.data.localeCompare(a.data) || b.created_at.localeCompare(a.created_at))
 }
 
 export async function createRegistro(
   input: NovoRegistroProducao,
   registradoPor: string,
 ): Promise<RegistroProducao> {
-  const ordem = findRow('ordens_producao', input.ordem_producao_id)
+  const ordem = await findRow('ordens_producao', input.ordem_producao_id)
   if (!ordem) {
     throw new Error('Ordem de producao nao encontrada')
   }
@@ -56,17 +54,20 @@ export async function updateRegistro(
 }
 
 export async function listDefeitos(ordemId?: string): Promise<RegistroDefeito[]> {
-  const defeitos = listRows(DEFEITOS).filter(
-    (defeito) => !ordemId || defeito.ordem_producao_id === ordemId,
-  )
-  return defeitos.sort((a, b) => b.created_at.localeCompare(a.created_at))
+  if (ordemId) {
+    return query<RegistroDefeito>(
+      'SELECT * FROM registros_defeito WHERE ordem_producao_id = $1 ORDER BY created_at DESC',
+      [ordemId],
+    )
+  }
+  return query<RegistroDefeito>('SELECT * FROM registros_defeito ORDER BY created_at DESC')
 }
 
 export async function createDefeito(
   input: NovoRegistroDefeito,
   registradoPor: string,
 ): Promise<RegistroDefeito> {
-  const ordem = findRow('ordens_producao', input.ordem_producao_id)
+  const ordem = await findRow('ordens_producao', input.ordem_producao_id)
   if (!ordem) {
     throw new Error('Ordem de producao nao encontrada')
   }
