@@ -5,13 +5,14 @@
 ![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
 ![Electron](https://img.shields.io/badge/Electron-42-47848F?logo=electron&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-PGlite-4169E1?logo=postgresql&logoColor=white)
 ![Status](https://img.shields.io/badge/status-concluido-success)
 
 Sistema desktop para gestao industrial de uma usinagem: controle completo de
 **Ordens de Producao (OPs)**, registro de producao diaria no chao de fabrica,
 **modulo financeiro** (orcamentos, contas a receber, faturamento) e
-**relatorios imprimiveis em A4** — funcionando 100% offline, com banco de
-dados local.
+**relatorios imprimiveis em A4** — funcionando 100% offline, com banco
+**PostgreSQL local embutido** no proprio aplicativo.
 
 ## Sumario
 
@@ -84,14 +85,15 @@ dados local.
 | React Router 6 (HashRouter) | Navegacao (compativel com `file://`) |
 | lucide-react | Icones |
 | Electron 42 + electron-builder | Empacotamento desktop (Windows/Linux) |
-| localStorage | Banco de dados local (sem backend remoto) |
+| PostgreSQL (PGlite) | Banco de dados local embutido, schema SQL relacional |
 
 ## Arquitetura
 
-O banco de dados eh **local apenas**: todas as colecoes (usuarios, OPs,
-registros de producao, defeitos, orcamentos, movimentos financeiros e
-notas fiscais) vivem no `localStorage`, gravadas de forma atomica por uma
-camada unica de persistencia. Detalhes em [docs/DATABASE.md](docs/DATABASE.md).
+O banco de dados eh **PostgreSQL local**, embutido no proprio app via
+PGlite (engine oficial do Postgres em WASM): tabelas relacionais com
+chaves estrangeiras `ON DELETE CASCADE`, queries SQL parametrizadas e
+persistencia na maquina — sem backend remoto e sem servico para
+instalar. Detalhes em [docs/DATABASE.md](docs/DATABASE.md).
 
 ```text
 src/
