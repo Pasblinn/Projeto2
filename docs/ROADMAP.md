@@ -132,6 +132,16 @@ pagina da OP (a pagina separada de producao foi removida).
 - [x] `fix: prevent duplicate seed users on concurrent initialization`
 - [x] `docs: update manual for the official OP workflow`
 
+## Refatoracao - PostgreSQL Local Embutido (concluida)
+
+O banco local passou de localStorage para **PostgreSQL embutido**
+(PGlite, engine oficial do Postgres em WASM): schema SQL relacional,
+chaves estrangeiras com ON DELETE CASCADE e queries parametrizadas,
+mantendo o funcionamento 100% offline.
+
+- [x] `refactor: replace localStorage with embedded PostgreSQL (PGlite)`
+- [x] `docs: document embedded PostgreSQL database`
+
 ## Fase 11 - Documentacao Final (concluida)
 
 - [x] `docs: add user manual (MANUAL_USUARIO.md)`
