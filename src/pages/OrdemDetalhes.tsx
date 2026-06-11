@@ -13,6 +13,7 @@ import {
   aprovarOrdem,
   deleteOrdem,
   getOrdem,
+  setPreparacaoMaquina,
   updateOrdem,
   updateStatusProducao,
 } from '@/services/ordens'
@@ -41,6 +42,17 @@ import {
 
 function today(): string {
   return new Date().toISOString().slice(0, 10)
+}
+
+function formatTimer(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  return [hours, minutes, seconds].map((v) => String(v).padStart(2, '0')).join(':')
+}
+
+function elapsedSince(inicio: string): number {
+  return Math.max(0, Math.floor((Date.now() - new Date(inicio).getTime()) / 1000))
 }
 
 function InfoItem({ label, value }: { label: string; value?: string | null }) {
@@ -130,6 +142,16 @@ function OrdemDetalhes() {
 
   const isGestor = hasRole(['chefe', 'financeiro'])
 
+  // Re-render every second while the setup timer is running so the
+  // elapsed time keeps counting on screen.
+  const timerRunning = ordem?.preparacao_maquina_inicio != null
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    if (!timerRunning) return
+    const interval = window.setInterval(() => setTick((t) => t + 1), 1000)
+    return () => window.clearInterval(interval)
+  }, [timerRunning])
+
   const load = useCallback(async () => {
     if (!id) return
     setLoading(true)
@@ -198,6 +220,27 @@ function OrdemDetalhes() {
       navigate('/dashboard')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Falha ao excluir a OP')
+    }
+  }
+
+  async function handleTimer() {
+    if (!ordem) return
+    try {
+      if (ordem.preparacao_maquina_inicio) {
+        const total =
+          ordem.preparacao_maquina_segundos + elapsedSince(ordem.preparacao_maquina_inicio)
+        setOrdem(await setPreparacaoMaquina(ordem.id, total, null))
+      } else {
+        setOrdem(
+          await setPreparacaoMaquina(
+            ordem.id,
+            ordem.preparacao_maquina_segundos,
+            new Date().toISOString(),
+          ),
+        )
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Falha ao atualizar o cronometro')
     }
   }
 
@@ -457,6 +500,40 @@ function OrdemDetalhes() {
             <InfoItem label="Observacoes" value={ordem.observacoes} />
           </div>
         )}
+      </Card>
+
+      <Card title="Preparacao da Maquina">
+        <div className="flex flex-wrap items-center gap-6 rounded-lg border-2 border-gray-200 bg-gray-50 p-6">
+          <p
+            className={`font-mono text-4xl font-bold tabular-nums ${
+              timerRunning ? 'text-green-600' : 'text-gray-800'
+            }`}
+          >
+            {formatTimer(
+              ordem.preparacao_maquina_segundos +
+                (ordem.preparacao_maquina_inicio
+                  ? elapsedSince(ordem.preparacao_maquina_inicio)
+                  : 0),
+            )}
+          </p>
+          <Button
+            variant={timerRunning ? 'danger' : 'success'}
+            size="sm"
+            onClick={handleTimer}
+          >
+            {timerRunning ? 'Pausar' : 'Iniciar'}
+          </Button>
+          {timerRunning ? (
+            <span className="flex items-center gap-2 text-sm font-semibold text-green-600">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+              Em andamento
+            </span>
+          ) : (
+            ordem.preparacao_maquina_segundos > 0 && (
+              <span className="text-sm text-gray-500">Tempo acumulado</span>
+            )
+          )}
+        </div>
       </Card>
 
       <Card
