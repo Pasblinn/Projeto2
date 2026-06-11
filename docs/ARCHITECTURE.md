@@ -1,133 +1,149 @@
 # Arquitetura - RJ Usinagem
 
-Documentacao da arquitetura tecnica planejada para o sistema.
+Documentacao da arquitetura tecnica do sistema.
 
 ## Visao Geral
 
-Aplicacao cliente-servidor com cliente desktop (Electron) e mobile (browser),
-ambos consumindo um backend gerenciado (Supabase).
+Aplicacao desktop totalmente local: o frontend React roda dentro do
+Electron (ou no navegador, em desenvolvimento) e o banco de dados eh um
+**PostgreSQL embutido** (PGlite) que vive no proprio processo do app.
+Nao ha backend remoto nem dependencia de internet.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                         SUPABASE                                │
-│  - PostgreSQL (tabelas de OPs, producao, financeiro, ponto)     │
-│  - Auth (email + senha)                                         │
-│  - Row Level Security (RLS) por role                            │
-│  - Storage (futuras imagens de pecas)                           │
-│  - Edge Functions / RPC (funcoes de negocio)                    │
+│                     APP DESKTOP (Electron)                      │
+│                                                                 │
+│  ┌───────────────────────┐      ┌───────────────────────────┐  │
+│  │   FRONTEND (React)    │      │   POSTGRESQL (PGlite)     │  │
+│  │   pages + components  │ ───► │   engine oficial em WASM  │  │
+│  │   contexts + services │ SQL  │   schema relacional + FKs │  │
+│  └───────────────────────┘      └─────────────┬─────────────┘  │
+│                                               │                 │
+│                                               ▼                 │
+│                                  Persistencia local (IndexedDB) │
 └─────────────────────────────────────────────────────────────────┘
-                              │
-          ┌───────────────────┴───────────────────┐
-          ▼                                       ▼
-┌─────────────────────┐               ┌─────────────────────┐
-│   DESKTOP (React)   │               │   MOBILE (React)    │
-│   Electron wrapper  │               │   Browser (PWA)     │
-│   Autenticado       │               │   Token UUID unico  │
-└─────────────────────┘               └─────────────────────┘
 ```
 
 ## Camadas do Frontend
 
-```
+```text
 src/
 ├── components/     # UI reutilizavel (Button, Card, Modal, ...)
+│   ├── financeiro/ # Abas do modulo financeiro
+│   └── reports/    # Relatorios imprimiveis em A4
 ├── contexts/       # React Context (Auth, Toast)
-├── pages/          # Views de rota (Dashboard, Financeiro, ...)
-├── services/       # Cliente Supabase e funcoes de API
+├── pages/          # Views de rota (Dashboard, OrdemDetalhes, ...)
+├── services/       # Camada de dados: db (SQL) + regras de negocio
 ├── types/          # Tipos TypeScript compartilhados
-├── utils/          # Utilitarios puros (formatacao, exportacao)
-├── App.tsx         # Rotas e providers
+├── utils/          # Utilitarios puros (formatacao)
+├── App.tsx         # Rotas e providers (HashRouter)
 └── main.tsx        # Entry point
 ```
 
 ### Principios
 
-- **Componentes UI puros** nao sabem sobre Supabase. Recebem dados via props.
+- **Componentes UI puros** nao sabem sobre o banco. Recebem dados via props.
 - **Pages** orquestram: chamam servicos, compoem componentes e gerenciam estado.
-- **Services** encapsulam toda comunicacao com backend. Funcoes puras com
-  assinaturas tipadas retornando Promises.
-- **Contexts** sao usados apenas para estado global real (auth, toasts). Estado
-  de tela fica em `useState` local.
+- **Services** encapsulam toda a logica de dados. Funcoes assincronas
+  tipadas; apenas `services/db.ts` fala SQL diretamente.
+- **Contexts** sao usados apenas para estado global real (auth, toasts).
+  Estado de tela fica em `useState` local.
 
-## Modelagem de Dados
+## Camada de Dados
 
-Entidades principais (detalhes em commits futuros):
+`services/db.ts` concentra o acesso ao PostgreSQL embutido:
 
-- `users` - usuarios autenticados com role
-- `ordens_producao` - OPs com status de producao e financeiro
-- `registro_producao` - registros diarios de producao
-- `registro_defeitos` - defeitos com causa e acao corretiva
+- Cria o schema na primeira execucao (`CREATE TABLE IF NOT EXISTS`).
+- Expoe helpers genericos (`listRows`, `findRow`, `insertRow`,
+  `updateRow`, `deleteRow`, `nextCounter`) e `query()` para SQL livre.
+- Integridade referencial: `FOREIGN KEY ... ON DELETE CASCADE` liga
+  producao, defeitos, movimentos e notas a sua OP.
+
+Modelagem (detalhes em [DATABASE.md](DATABASE.md)):
+
+- `users` - usuarios locais com role e hash de senha
+- `ordens_producao` - OPs completas (material, cliente, peca, precos,
+  aprovacao por supervisor, cronometro de setup)
+- `registros_producao` - producao diaria (turno, horario, operacao)
+- `registros_defeito` - defeitos com causa e acao corretiva
 - `orcamentos` - orcamentos que podem virar OPs
-- `movimentos_financeiros` - ledger de pagamentos e ajustes
-- `funcionarios_ponto` - funcionarios do modulo de ponto
-- `registro_ponto` - registros de entrada e saida
-- `auditoria` - log de alteracoes sensiveis
+- `movimentos_financeiros` - ledger de pagamentos, estornos e custos
+- `notas_fiscais` - notas emitidas por OP
+- `counters` - sequenciais atomicos (orcamento, NF)
 
 ## Controle de Acesso
 
 3 roles com permissoes diferentes:
 
-| Role       | OPs              | Producao | Financeiro | Ponto     |
-| ---------- | ---------------- | -------- | ---------- | --------- |
-| Operador   | Visualizar       | Criar    | -          | -         |
-| Chefe      | Criar, Aprovar   | Criar    | -          | -         |
-| Financeiro | Tudo             | Criar    | Tudo       | Gerenciar |
+| Role       | OPs                | Producao  | Financeiro |
+| ---------- | ------------------ | --------- | ---------- |
+| Operador   | Visualizar, status | -         | -          |
+| Chefe      | Criar, Aprovar     | Registrar | -          |
+| Financeiro | Tudo               | Registrar | Tudo       |
 
-Enforcement:
-- Frontend: ocultacao de botoes/abas por role
-- Backend: Row Level Security no Supabase (fonte da verdade)
+Enforcement: rotas protegidas (`ProtectedRoute` + `RoleGuard`) e menu
+dinamico por role. Como o app eh local e mono-usuario por maquina, o
+frontend eh a fronteira de autorizacao.
 
 ## Decisoes Tecnicas
 
-### Por que Vite?
-Dev server rapido, HMR excelente, build otimizado com Rollup. Integra bem com
-Electron para build de producao.
+### Por que PostgreSQL embutido (PGlite)?
 
-### Por que Supabase?
-PostgreSQL gerenciado + Auth + RLS em um unico servico. Plano gratuito
-suficiente para MVP (500 MB). Cliente TypeScript oficial bem tipado.
+Requisito do projeto: banco local e PostgreSQL. O PGlite empacota o
+engine oficial do Postgres em WASM dentro do app — schema SQL real,
+constraints e queries parametrizadas — sem instalar servico nem
+depender de internet. Zero configuracao para o usuario final.
+
+### Por que Vite?
+
+Dev server rapido, HMR excelente, build otimizado com Rollup. Integra
+bem com Electron para build de producao.
 
 ### Por que Tailwind?
-Prototipagem rapida, sem troca de contexto entre CSS e JSX. Purge automatico
-resulta em bundle pequeno. Utilitarios de impressao customizados para A4.
+
+Prototipagem rapida, sem troca de contexto entre CSS e JSX. Purge
+automatico resulta em bundle pequeno. Utilitarios de impressao
+customizados para A4.
 
 ### Por que Electron?
-Usuarios finais pediram app desktop instalavel no Windows. Electron reusa
-100% do codigo React. Trade-off: binario maior (~150MB), aceitavel.
 
-### Por que Mobile via browser (nao nativo)?
-Ponto eletronico eh fluxo simples (1 botao). PWA suficiente, evita custo
-de loja de apps e build nativo. Acesso via link curto enviado por WhatsApp.
+Usuarios finais pediram app desktop instalavel. Electron reusa 100% do
+codigo React. Trade-off: binario maior (~140MB), aceitavel.
+
+### Por que HashRouter?
+
+O app empacotado carrega via `file://`, onde roteamento por historico
+(BrowserRouter) nao resolve caminhos.
 
 ## Fluxo de Build
 
 ### Desenvolvimento
-```
-npm run dev
-   → Vite serve em localhost:5173
-   → HMR ativo
-   → (Fase 10+) Electron abre janela apontando para o dev server
+
+```bash
+npm run dev          # Vite em localhost:5173, HMR ativo
+npm run electron:dev # janela Electron apontando para o dev server
 ```
 
 ### Producao
-```
-npm run build
-   → tsc (type check)
-   → Vite build → dist/
-   → (Fase 10+) electron-builder → instalador .exe em dist-electron/
+
+```bash
+npm run build                 # tsc (type check) + Vite build → dist/
+npm run electron:build:linux  # electron-builder → AppImage em release/
+npm run electron:build        # electron-builder → instalador Windows
 ```
 
 ## Padroes de Codigo
 
 - TypeScript em modo strict
-- Funcoes pequenas (<20 linhas preferidas)
+- Funcoes pequenas e coesas
 - Nomes descritivos em ingles (codigo) e pt-BR (UI)
 - Sem comentarios explicando "o que" - apenas "porque" quando nao obvio
 - Conventional Commits
 
 ## Referencias
 
-- [Supabase Docs](https://supabase.com/docs)
+- [PGlite Docs](https://pglite.dev)
+- [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - [Vite Guide](https://vitejs.dev/guide/)
 - [Tailwind Docs](https://tailwindcss.com/docs)
 - [Electron Docs](https://www.electronjs.org/docs/latest)
