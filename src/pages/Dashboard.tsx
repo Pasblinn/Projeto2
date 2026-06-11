@@ -16,7 +16,7 @@ import type {
   StatusFinanceiro,
   StatusProducao,
 } from '@/types'
-import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
+import { formatCurrency, formatDate } from '@/utils/format'
 
 const PRODUCAO_FILTER_OPTIONS: { value: StatusProducao | ''; label: string }[] = [
   { value: '', label: 'Producao: todas' },
@@ -74,8 +74,8 @@ function Dashboard() {
       if (!termo) return true
       return (
         op.cliente.toLowerCase().includes(termo) ||
-        op.descricao.toLowerCase().includes(termo) ||
-        formatOpCode(op.numero).toLowerCase().includes(termo)
+        op.nome_peca.toLowerCase().includes(termo) ||
+        op.codigo.toLowerCase().includes(termo)
       )
     })
   }, [ordens, search, filtroProducao, filtroFinanceiro])
@@ -84,7 +84,7 @@ function Dashboard() {
     if (!user) return
     try {
       const created = await createOrdem(values, user.id)
-      toast.success(`${formatOpCode(created.numero)} criada com sucesso`)
+      toast.success(`${created.codigo} criada com sucesso`)
       setCreating(false)
       await load()
     } catch (err) {
@@ -117,7 +117,7 @@ function Dashboard() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex-1">
                 <Input
-                  placeholder="Buscar por cliente, descricao ou codigo da OP..."
+                  placeholder="Buscar por cliente, peca ou codigo da OP..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -149,9 +149,10 @@ function Dashboard() {
                     <tr>
                       <th className="px-3 py-2 font-medium">OP</th>
                       <th className="px-3 py-2 font-medium">Cliente</th>
-                      <th className="px-3 py-2 font-medium">Descricao</th>
+                      <th className="px-3 py-2 font-medium">Peca</th>
                       <th className="px-3 py-2 font-medium">Qtd.</th>
-                      <th className="px-3 py-2 font-medium">Entrega</th>
+                      <th className="px-3 py-2 font-medium">Inicio</th>
+                      <th className="px-3 py-2 font-medium">Termino</th>
                       <th className="px-3 py-2 font-medium">Producao</th>
                       <th className="px-3 py-2 font-medium">Financeiro</th>
                       <th className="px-3 py-2 text-right font-medium">Valor</th>
@@ -165,17 +166,20 @@ function Dashboard() {
                         className="cursor-pointer hover:bg-gray-50"
                       >
                         <td className="px-3 py-2 font-medium text-gray-900">
-                          {formatOpCode(op.numero)}
+                          {op.codigo}
                         </td>
                         <td className="px-3 py-2 text-gray-700">{op.cliente}</td>
                         <td className="max-w-xs truncate px-3 py-2 text-gray-700">
-                          {op.descricao}
+                          {op.nome_peca}
                         </td>
                         <td className="px-3 py-2 text-gray-700">
-                          {op.quantidade_produzida}/{op.quantidade}
+                          {op.quantidade_total} {op.unidade ?? ''}
                         </td>
                         <td className="px-3 py-2 text-gray-700">
-                          {formatDate(op.data_entrega)}
+                          {formatDate(op.data_inicio)}
+                        </td>
+                        <td className="px-3 py-2 text-gray-700">
+                          {formatDate(op.data_termino)}
                         </td>
                         <td className="px-3 py-2">
                           <StatusBadge kind="producao" status={op.status_producao} />
@@ -184,7 +188,7 @@ function Dashboard() {
                           <StatusBadge kind="financeiro" status={op.status_financeiro} />
                         </td>
                         <td className="px-3 py-2 text-right text-gray-700">
-                          {formatCurrency(op.valor_total)}
+                          {formatCurrency(op.preco_servico)}
                         </td>
                       </tr>
                     ))}
@@ -196,7 +200,12 @@ function Dashboard() {
         )}
       </Card>
 
-      <Modal open={creating} onClose={() => setCreating(false)} title="Nova Ordem de Producao">
+      <Modal
+        open={creating}
+        onClose={() => setCreating(false)}
+        title="Nova Ordem de Producao"
+        size="lg"
+      >
         <OrdemForm
           submitLabel="Criar OP"
           onSubmit={handleCreate}

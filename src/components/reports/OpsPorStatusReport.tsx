@@ -5,7 +5,7 @@ import ReportTable from '@/components/reports/ReportTable'
 import type { ReportProps } from '@/components/reports/types'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao, StatusProducao } from '@/types'
-import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
+import { formatCurrency, formatDate } from '@/utils/format'
 
 const STATUS_ORDER: StatusProducao[] = [
   'criada',
@@ -61,7 +61,7 @@ function OpsPorStatusReport(_props: ReportProps) {
               align: 'right',
               render: (g) =>
                 formatCurrency(
-                  g.ordens.reduce((sum, ordem) => sum + (ordem.valor_total ?? 0), 0),
+                  g.ordens.reduce((sum, ordem) => sum + (ordem.preco_servico ?? 0), 0),
                 ),
             },
           ]}
@@ -79,18 +79,18 @@ function OpsPorStatusReport(_props: ReportProps) {
               rows={grupo.ordens}
               rowKey={(ordem) => ordem.id}
               columns={[
-                { header: 'OP', render: (o) => formatOpCode(o.numero) },
+                { header: 'OP', render: (o) => o.codigo },
                 { header: 'Cliente', render: (o) => o.cliente },
-                { header: 'Entrega', render: (o) => formatDate(o.data_entrega) },
+                { header: 'Entrega', render: (o) => formatDate(o.data_termino) },
                 {
-                  header: 'Progresso',
+                  header: 'Quantidade',
                   align: 'right',
-                  render: (o) => `${o.quantidade_produzida}/${o.quantidade}`,
+                  render: (o) => `${o.quantidade_total} ${o.unidade ?? ''}`.trim(),
                 },
                 {
                   header: 'Valor total',
                   align: 'right',
-                  render: (o) => formatCurrency(o.valor_total),
+                  render: (o) => formatCurrency(o.preco_servico),
                 },
               ]}
             />

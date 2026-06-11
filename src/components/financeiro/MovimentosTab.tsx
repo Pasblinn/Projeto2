@@ -14,7 +14,6 @@ import type { MovimentoFinanceiro, OrdemProducao, TipoMovimento } from '@/types'
 import {
   formatCurrency,
   formatDate,
-  formatOpCode,
   TIPO_MOVIMENTO_LABEL,
 } from '@/utils/format'
 
@@ -78,7 +77,7 @@ function MovimentosTab() {
 
   const ordemOptions = ordens.map((ordem) => ({
     value: ordem.id,
-    label: `${formatOpCode(ordem.numero)} - ${ordem.cliente}`,
+    label: `${ordem.codigo} - ${ordem.cliente}`,
   }))
 
   const visiveis = useMemo(
@@ -173,7 +172,7 @@ function MovimentosTab() {
                     <tr key={movimento.id}>
                       <td className="px-4 py-3">{formatDate(movimento.data)}</td>
                       <td className="px-4 py-3 font-medium text-gray-900">
-                        {ordem ? formatOpCode(ordem.numero) : '—'}
+                        {ordem ? ordem.codigo : '—'}
                       </td>
                       <td className="px-4 py-3">{ordem?.cliente ?? '—'}</td>
                       <td className="px-4 py-3">

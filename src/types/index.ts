@@ -34,22 +34,46 @@ export type FormaPagamento =
 
 export interface OrdemProducao {
   id: string
-  numero: number
+  codigo: string
   tipo: TipoOP
-  cliente: string
-  descricao: string
-  quantidade: number
-  quantidade_produzida: number
-  data_entrega?: string | null
+  data_inicio: string
+  data_termino?: string | null
   status_producao: StatusProducao
   status_financeiro: StatusFinanceiro
-  forma_pagamento?: FormaPagamento | null
-  valor_total?: number | null
-  valor_pago: number
-  observacoes?: string | null
+
+  // Material
+  material?: string | null
+  codigo_descricao_material?: string | null
+  quantidade_material?: string | null
+  lote?: string | null
+  fornecedor?: string | null
+  observacoes_material?: string | null
+
+  // Cliente e peca
+  cliente: string
+  cnpj_cliente?: string | null
+  nome_peca: string
+  quantidade_total: number
+  unidade?: string | null
+  preco_servico: number
+  preco_material?: number | null
+
+  // Producao
+  maquina_utilizada?: string | null
+  operador_responsavel?: string | null
+  preparacao_maquina_segundos: number
+  preparacao_maquina_inicio?: string | null
+
+  // Aprovacao do supervisor
   aprovada: boolean
-  aprovada_por?: string | null
-  aprovada_em?: string | null
+  supervisor_nome?: string | null
+  supervisor_data_aprovacao?: string | null
+
+  // Financeiro
+  forma_pagamento?: FormaPagamento | null
+  valor_pago: number
+
+  observacoes?: string | null
   criada_por: string
   created_at: string
   updated_at: string
@@ -57,25 +81,39 @@ export interface OrdemProducao {
 
 export type NovaOrdemProducao = Pick<
   OrdemProducao,
-  'tipo' | 'cliente' | 'descricao' | 'quantidade'
+  'tipo' | 'data_inicio' | 'cliente' | 'nome_peca' | 'quantidade_total' | 'preco_servico'
 > &
   Partial<
     Pick<
       OrdemProducao,
-      'data_entrega' | 'forma_pagamento' | 'valor_total' | 'observacoes'
+      | 'data_termino'
+      | 'material'
+      | 'codigo_descricao_material'
+      | 'quantidade_material'
+      | 'lote'
+      | 'fornecedor'
+      | 'observacoes_material'
+      | 'cnpj_cliente'
+      | 'unidade'
+      | 'preco_material'
+      | 'maquina_utilizada'
+      | 'operador_responsavel'
+      | 'forma_pagamento'
+      | 'observacoes'
     >
   >
 
 export type AtualizaOrdemProducao = Partial<NovaOrdemProducao>
 
-export type Turno = 'manha' | 'tarde' | 'noite'
-
 export interface RegistroProducao {
   id: string
   ordem_producao_id: string
   data: string
-  turno: Turno
-  quantidade_produzida: number
+  turno: string
+  hora_inicio?: string | null
+  hora_fim?: string | null
+  descricao_operacao: string
+  maquina_utilizada?: string | null
   pecas_defeituosas: number
   observacoes?: string | null
   registrado_por?: string | null
@@ -84,9 +122,11 @@ export interface RegistroProducao {
 
 export type NovoRegistroProducao = Pick<
   RegistroProducao,
-  'ordem_producao_id' | 'data' | 'turno' | 'quantidade_produzida' | 'pecas_defeituosas'
+  'ordem_producao_id' | 'data' | 'turno' | 'descricao_operacao' | 'pecas_defeituosas'
 > &
-  Partial<Pick<RegistroProducao, 'observacoes'>>
+  Partial<
+    Pick<RegistroProducao, 'hora_inicio' | 'hora_fim' | 'maquina_utilizada' | 'observacoes'>
+  >
 
 export interface RegistroDefeito {
   id: string

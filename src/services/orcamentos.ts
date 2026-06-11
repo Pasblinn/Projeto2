@@ -81,11 +81,14 @@ export async function converterEmOrdem(
   const ordem = await createOrdem(
     {
       tipo: 'encomenda',
+      data_inicio: new Date().toISOString().slice(0, 10),
       cliente: orcamento.cliente,
-      descricao: `${orcamento.peca} (origem: ${orcamento.codigo})`,
-      quantidade: orcamento.quantidade,
-      valor_total: orcamento.valor_estimado,
-      observacoes: orcamento.observacoes ?? null,
+      nome_peca: orcamento.peca,
+      quantidade_total: orcamento.quantidade,
+      preco_servico: orcamento.valor_estimado,
+      observacoes: orcamento.observacoes
+        ? `${orcamento.observacoes} (origem: ${orcamento.codigo})`
+        : `Origem: ${orcamento.codigo}`,
     },
     criadaPor,
   )

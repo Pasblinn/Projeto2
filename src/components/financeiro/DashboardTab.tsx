@@ -5,7 +5,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { saldoDevedor } from '@/services/financeiro'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao } from '@/types'
-import { formatCurrency, formatOpCode } from '@/utils/format'
+import { formatCurrency } from '@/utils/format'
 
 interface StatCardProps {
   label: string
@@ -58,7 +58,7 @@ function DashboardTab() {
   )
 
   const totais = useMemo(() => {
-    const faturamento = ativas.reduce((sum, o) => sum + (o.valor_total ?? 0), 0)
+    const faturamento = ativas.reduce((sum, o) => sum + (o.preco_servico ?? 0), 0)
     const recebido = ativas.reduce((sum, o) => sum + o.valor_pago, 0)
     const aReceber = ativas.reduce((sum, o) => sum + saldoDevedor(o), 0)
     const comSaldo = ativas.filter((o) => saldoDevedor(o) > 0).length
@@ -115,14 +115,14 @@ function DashboardTab() {
                 {maioresSaldos.map((ordem) => (
                   <tr key={ordem.id}>
                     <td className="px-4 py-3 font-medium text-gray-900">
-                      {formatOpCode(ordem.numero)}
+                      {ordem.codigo}
                     </td>
                     <td className="px-4 py-3">{ordem.cliente}</td>
                     <td className="px-4 py-3">
                       <StatusBadge kind="financeiro" status={ordem.status_financeiro} />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {formatCurrency(ordem.valor_total)}
+                      {formatCurrency(ordem.preco_servico)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {formatCurrency(ordem.valor_pago)}

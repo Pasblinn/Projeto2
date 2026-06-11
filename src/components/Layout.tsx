@@ -19,7 +19,6 @@ interface LayoutProps {
 const NAV_ITEMS: NavItem[] = [
   { key: 'dashboard', label: 'Dashboard', icon: 'D' },
   { key: 'ordens', label: 'Ordens de Producao', icon: 'O' },
-  { key: 'producao', label: 'Registrar Producao', icon: 'P', roles: ['chefe', 'financeiro'] },
   { key: 'financeiro', label: 'Financeiro', icon: 'F', roles: ['financeiro'] },
   { key: 'relatorios', label: 'Relatorios', icon: 'R', roles: ['financeiro'] },
 ]

@@ -9,7 +9,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { emitirNota, formatNotaNumero, listNotas } from '@/services/faturamento'
 import { listOrdens } from '@/services/ordens'
 import type { NotaFiscal, OrdemProducao } from '@/types'
-import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
+import { formatCurrency, formatDate } from '@/utils/format'
 
 function today(): string {
   return new Date().toISOString().slice(0, 10)
@@ -61,7 +61,7 @@ function FaturamentoTab() {
       ordens.filter(
         (ordem) =>
           ordem.status_producao === 'finalizada' &&
-          (ordem.valor_total ?? 0) > 0 &&
+          (ordem.preco_servico ?? 0) > 0 &&
           !ordensComNota.has(ordem.id),
       ),
     [ordens, ordensComNota],
@@ -69,7 +69,7 @@ function FaturamentoTab() {
 
   function openEmissao(ordem: OrdemProducao) {
     setEmitindo(ordem)
-    setValor(String(ordem.valor_total ?? ''))
+    setValor(String(ordem.preco_servico ?? ''))
     setDataEmissao(today())
     setObservacoes('')
   }
@@ -135,12 +135,12 @@ function FaturamentoTab() {
                 {aFaturar.map((ordem) => (
                   <tr key={ordem.id}>
                     <td className="px-4 py-3 font-medium text-gray-900">
-                      {formatOpCode(ordem.numero)}
+                      {ordem.codigo}
                     </td>
                     <td className="px-4 py-3">{ordem.cliente}</td>
-                    <td className="px-4 py-3 text-gray-600">{ordem.descricao}</td>
+                    <td className="px-4 py-3 text-gray-600">{ordem.nome_peca}</td>
                     <td className="px-4 py-3 text-right">
-                      {formatCurrency(ordem.valor_total)}
+                      {formatCurrency(ordem.preco_servico)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Button variant="primary" size="sm" onClick={() => openEmissao(ordem)}>
@@ -180,7 +180,7 @@ function FaturamentoTab() {
                         {formatNotaNumero(nota.numero)}
                       </td>
                       <td className="px-4 py-3">
-                        {ordem ? formatOpCode(ordem.numero) : '—'}
+                        {ordem ? ordem.codigo : '—'}
                       </td>
                       <td className="px-4 py-3">{ordem?.cliente ?? '—'}</td>
                       <td className="px-4 py-3">{formatDate(nota.data_emissao)}</td>
@@ -198,7 +198,7 @@ function FaturamentoTab() {
       <Modal
         open={emitindo != null}
         onClose={() => setEmitindo(null)}
-        title={`Emitir NF - ${emitindo ? formatOpCode(emitindo.numero) : ''}`}
+        title={`Emitir NF - ${emitindo ? emitindo.codigo : ''}`}
         size="sm"
       >
         {emitindo && (

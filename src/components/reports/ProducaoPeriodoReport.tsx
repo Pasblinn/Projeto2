@@ -6,7 +6,7 @@ import type { ReportProps } from '@/components/reports/types'
 import { listOrdens } from '@/services/ordens'
 import { listRegistros } from '@/services/producao'
 import type { OrdemProducao, RegistroProducao } from '@/types'
-import { formatDate, formatOpCode, TURNO_LABEL } from '@/utils/format'
+import { formatDate } from '@/utils/format'
 
 interface ProducaoData {
   ordens: OrdemProducao[]
@@ -15,7 +15,7 @@ interface ProducaoData {
 
 interface ResumoPorOp {
   ordem: OrdemProducao
-  produzidas: number
+  operacoes: number
   defeituosas: number
 }
 
@@ -43,14 +43,14 @@ function ProducaoPeriodoReport({ params }: ReportProps) {
   for (const registro of registrosPeriodo) {
     const ordem = ordensById.get(registro.ordem_producao_id)
     if (!ordem) continue
-    const atual = porOp.get(ordem.id) ?? { ordem, produzidas: 0, defeituosas: 0 }
-    atual.produzidas += registro.quantidade_produzida
+    const atual = porOp.get(ordem.id) ?? { ordem, operacoes: 0, defeituosas: 0 }
+    atual.operacoes += 1
     atual.defeituosas += registro.pecas_defeituosas
     porOp.set(ordem.id, atual)
   }
-  const resumo = [...porOp.values()].sort((a, b) => b.produzidas - a.produzidas)
+  const resumo = [...porOp.values()].sort((a, b) => b.operacoes - a.operacoes)
 
-  const totalProduzidas = resumo.reduce((sum, item) => sum + item.produzidas, 0)
+  const totalOperacoes = registrosPeriodo.length
   const totalDefeituosas = resumo.reduce((sum, item) => sum + item.defeituosas, 0)
 
   return (
@@ -64,10 +64,10 @@ function ProducaoPeriodoReport({ params }: ReportProps) {
           rowKey={(item) => item.ordem.id}
           emptyMessage="Nenhuma producao registrada no periodo."
           columns={[
-            { header: 'OP', render: (r) => formatOpCode(r.ordem.numero) },
+            { header: 'OP', render: (r) => r.ordem.codigo },
             { header: 'Cliente', render: (r) => r.ordem.cliente },
-            { header: 'Descricao', render: (r) => r.ordem.descricao },
-            { header: 'Produzidas', align: 'right', render: (r) => String(r.produzidas) },
+            { header: 'Peca', render: (r) => r.ordem.nome_peca },
+            { header: 'Operacoes', align: 'right', render: (r) => String(r.operacoes) },
             {
               header: 'Defeituosas',
               align: 'right',
@@ -76,7 +76,7 @@ function ProducaoPeriodoReport({ params }: ReportProps) {
           ]}
         />
         <p className="print-total mt-3 border-t-2 border-gray-900 pt-2 text-right text-base font-bold">
-          Total: {totalProduzidas} produzidas, {totalDefeituosas} defeituosas
+          Total: {totalOperacoes} operacoes, {totalDefeituosas} pecas defeituosas
         </p>
       </ReportSection>
 
@@ -89,23 +89,22 @@ function ProducaoPeriodoReport({ params }: ReportProps) {
             { header: 'Data', render: (r) => formatDate(r.data) },
             {
               header: 'OP',
-              render: (r) => {
-                const ordem = ordensById.get(r.ordem_producao_id)
-                return ordem ? formatOpCode(ordem.numero) : '—'
-              },
+              render: (r) => ordensById.get(r.ordem_producao_id)?.codigo ?? '—',
             },
-            { header: 'Turno', render: (r) => TURNO_LABEL[r.turno] },
+            { header: 'Turno', render: (r) => r.turno },
             {
-              header: 'Produzidas',
-              align: 'right',
-              render: (r) => String(r.quantidade_produzida),
+              header: 'Horario',
+              render: (r) =>
+                r.hora_inicio && r.hora_fim
+                  ? `${r.hora_inicio} - ${r.hora_fim}`
+                  : (r.hora_inicio ?? r.hora_fim ?? '—'),
             },
+            { header: 'Operacao', render: (r) => r.descricao_operacao },
             {
               header: 'Defeituosas',
               align: 'right',
               render: (r) => String(r.pecas_defeituosas),
             },
-            { header: 'Observacoes', render: (r) => r.observacoes ?? '—' },
           ]}
         />
       </ReportSection>

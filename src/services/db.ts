@@ -29,7 +29,6 @@ export interface DatabaseSchema {
 }
 
 export interface DatabaseCounters {
-  ordem_numero: number
   orcamento_codigo: number
   nota_numero: number
 }
@@ -56,7 +55,6 @@ function emptyDatabase(): DatabaseFile {
       notas_fiscais: [],
     },
     counters: {
-      ordem_numero: 0,
       orcamento_codigo: 0,
       nota_numero: 0,
     },

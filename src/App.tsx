@@ -8,7 +8,6 @@ import AppLayout from '@/components/AppLayout'
 import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import OrdemDetalhes from '@/pages/OrdemDetalhes'
-import Producao from '@/pages/Producao'
 import Financeiro from '@/pages/Financeiro'
 import Relatorios from '@/pages/Relatorios'
 import Forbidden from '@/pages/Forbidden'
@@ -34,14 +33,6 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/ordens" element={<Navigate to="/dashboard" replace />} />
               <Route path="/ordens/:id" element={<OrdemDetalhes />} />
-              <Route
-                path="/producao"
-                element={
-                  <RoleGuard allow={['chefe', 'financeiro']} fallback="/403">
-                    <Producao />
-                  </RoleGuard>
-                }
-              />
               <Route
                 path="/financeiro"
                 element={

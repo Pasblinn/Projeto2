@@ -24,16 +24,15 @@ export interface NovoMovimento {
 }
 
 export function saldoDevedor(ordem: OrdemProducao): number {
-  return Math.max(0, (ordem.valor_total ?? 0) - ordem.valor_pago)
+  return Math.max(0, ordem.preco_servico - ordem.valor_pago)
 }
 
 function statusFinanceiroFor(ordem: OrdemProducao, valorPago: number): StatusFinanceiro {
-  const total = ordem.valor_total ?? 0
-  if (total > 0 && valorPago >= total) return 'pago'
+  if (ordem.preco_servico > 0 && valorPago >= ordem.preco_servico) return 'pago'
 
   const vencida =
-    ordem.data_entrega != null &&
-    ordem.data_entrega < new Date().toISOString().slice(0, 10)
+    ordem.data_termino != null &&
+    ordem.data_termino < new Date().toISOString().slice(0, 10)
   if (vencida) return 'atrasado'
 
   return valorPago > 0 ? 'parcial' : 'pendente'

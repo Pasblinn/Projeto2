@@ -1,4 +1,4 @@
-import type { FormaPagamento, TipoMovimento, TipoOP, Turno } from '@/types'
+import type { FormaPagamento, TipoMovimento, TipoOP } from '@/types'
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -23,10 +23,6 @@ export function formatDate(value?: string | null): string {
   return dateFormatter.format(parsed)
 }
 
-export function formatOpCode(numero: number): string {
-  return `OP-${String(numero).padStart(4, '0')}`
-}
-
 export const TIPO_OP_LABEL: Record<TipoOP, string> = {
   encomenda: 'Encomenda',
   estoque: 'Estoque',
@@ -38,12 +34,6 @@ export const FORMA_PAGAMENTO_LABEL: Record<FormaPagamento, string> = {
   transferencia: 'Transferencia',
   dinheiro: 'Dinheiro',
   cartao: 'Cartao',
-}
-
-export const TURNO_LABEL: Record<Turno, string> = {
-  manha: 'Manha',
-  tarde: 'Tarde',
-  noite: 'Noite',
 }
 
 export const TIPO_MOVIMENTO_LABEL: Record<TipoMovimento, string> = {

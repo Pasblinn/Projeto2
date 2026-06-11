@@ -5,7 +5,6 @@ import Layout from '@/components/Layout'
 const ROUTE_KEYS: Record<string, string> = {
   '/dashboard': 'dashboard',
   '/ordens': 'ordens',
-  '/producao': 'producao',
   '/financeiro': 'financeiro',
   '/relatorios': 'relatorios',
 }

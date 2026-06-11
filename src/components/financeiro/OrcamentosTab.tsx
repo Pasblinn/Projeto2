@@ -15,7 +15,6 @@ import {
   updateOrcamento,
   updateStatusOrcamento,
 } from '@/services/orcamentos'
-import { formatOpCode } from '@/utils/format'
 import type { NovoOrcamento, Orcamento, StatusOrcamento } from '@/types'
 import { formatCurrency, formatDate } from '@/utils/format'
 
@@ -98,7 +97,7 @@ function OrcamentosTab() {
     if (!user) return
     try {
       const ordem = await converterEmOrdem(orcamento.id, user.id)
-      toast.success(`${orcamento.codigo} convertido em ${formatOpCode(ordem.numero)}`)
+      toast.success(`${orcamento.codigo} convertido em ${ordem.codigo}`)
       navigate(`/ordens/${ordem.id}`)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Falha ao converter orcamento'

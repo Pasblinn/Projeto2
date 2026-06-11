@@ -9,7 +9,6 @@ import type { MovimentoFinanceiro, OrdemProducao, StatusProducao } from '@/types
 import {
   formatCurrency,
   formatDate,
-  formatOpCode,
   TIPO_MOVIMENTO_LABEL,
 } from '@/utils/format'
 
@@ -49,7 +48,7 @@ function HistoricoClienteReport({ params }: ReportProps) {
   const ordensById = new Map(ordensCliente.map((ordem) => [ordem.id, ordem]))
 
   const totalContratado = ordensCliente.reduce(
-    (sum, ordem) => sum + (ordem.valor_total ?? 0),
+    (sum, ordem) => sum + (ordem.preco_servico ?? 0),
     0,
   )
   const totalPago = ordensCliente.reduce((sum, ordem) => sum + ordem.valor_pago, 0)
@@ -84,14 +83,14 @@ function HistoricoClienteReport({ params }: ReportProps) {
           rowKey={(ordem) => ordem.id}
           emptyMessage="Nenhuma OP para este cliente."
           columns={[
-            { header: 'OP', render: (o) => formatOpCode(o.numero) },
-            { header: 'Descricao', render: (o) => o.descricao },
+            { header: 'OP', render: (o) => o.codigo },
+            { header: 'Descricao', render: (o) => o.nome_peca },
             { header: 'Status', render: (o) => STATUS_PRODUCAO_LABEL[o.status_producao] },
             { header: 'Criada em', render: (o) => formatDate(o.created_at) },
             {
               header: 'Valor total',
               align: 'right',
-              render: (o) => formatCurrency(o.valor_total),
+              render: (o) => formatCurrency(o.preco_servico),
             },
             {
               header: 'Pago',
@@ -113,7 +112,7 @@ function HistoricoClienteReport({ params }: ReportProps) {
               header: 'OP',
               render: (m) => {
                 const ordem = ordensById.get(m.ordem_producao_id)
-                return ordem ? formatOpCode(ordem.numero) : '—'
+                return ordem ? ordem.codigo : '—'
               },
             },
             { header: 'Tipo', render: (m) => TIPO_MOVIMENTO_LABEL[m.tipo] },

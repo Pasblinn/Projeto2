@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import ReportSection from '@/components/reports/ReportSection'
 import ReportShell from '@/components/reports/ReportShell'
+import ReportTable from '@/components/reports/ReportTable'
 import type { ReportProps } from '@/components/reports/types'
-import { listMovimentos } from '@/services/financeiro'
+import { listMovimentos, saldoDevedor } from '@/services/financeiro'
 import { getOrdem } from '@/services/ordens'
 import { listDefeitos, listRegistros } from '@/services/producao'
 import type {
@@ -14,10 +16,8 @@ import {
   FORMA_PAGAMENTO_LABEL,
   formatCurrency,
   formatDate,
-  formatOpCode,
   TIPO_MOVIMENTO_LABEL,
   TIPO_OP_LABEL,
-  TURNO_LABEL,
 } from '@/utils/format'
 
 interface FichaData {
@@ -27,7 +27,8 @@ interface FichaData {
   movimentos: MovimentoFinanceiro[]
 }
 
-function InfoItem({ label, value }: { label: string; value: string }) {
+function InfoItem({ label, value }: { label: string; value?: string | null }) {
+  if (!value) return null
   return (
     <p className="print-info-item text-sm">
       <span className="print-info-label font-semibold">{label}: </span>
@@ -60,162 +61,128 @@ function FichaOpReport({ params }: ReportProps) {
   return (
     <ReportShell
       title="Ficha de Ordem de Producao"
-      subtitle={`${formatOpCode(ordem.numero)} - ${ordem.cliente}`}
+      subtitle={`${ordem.codigo} - ${ordem.cliente}`}
     >
-      <section className="print-section mb-6">
-        <h2 className="print-section-title mb-2 border-b border-gray-400 pb-1 text-base font-bold">
-          Dados Gerais
-        </h2>
+      <ReportSection title="Dados Gerais">
         <div className="print-info-grid grid grid-cols-2 gap-2">
           <InfoItem label="Tipo" value={TIPO_OP_LABEL[ordem.tipo]} />
           <InfoItem label="Cliente" value={ordem.cliente} />
-          <InfoItem label="Quantidade" value={String(ordem.quantidade)} />
-          <InfoItem label="Produzida" value={String(ordem.quantidade_produzida)} />
-          <InfoItem label="Entrega" value={formatDate(ordem.data_entrega)} />
-          <InfoItem label="Aprovada" value={ordem.aprovada ? 'Sim' : 'Nao'} />
-          <InfoItem label="Valor total" value={formatCurrency(ordem.valor_total)} />
+          <InfoItem label="CNPJ" value={ordem.cnpj_cliente} />
+          <InfoItem label="Peca" value={ordem.nome_peca} />
+          <InfoItem
+            label="Quantidade"
+            value={`${ordem.quantidade_total} ${ordem.unidade ?? 'unid.'}`}
+          />
+          <InfoItem label="Inicio" value={formatDate(ordem.data_inicio)} />
+          <InfoItem label="Termino" value={formatDate(ordem.data_termino)} />
+          <InfoItem
+            label="Aprovada"
+            value={
+              ordem.aprovada
+                ? `Sim, por ${ordem.supervisor_nome} em ${formatDate(ordem.supervisor_data_aprovacao)}`
+                : 'Nao'
+            }
+          />
+          <InfoItem label="Maquina" value={ordem.maquina_utilizada} />
+          <InfoItem label="Operador" value={ordem.operador_responsavel} />
+          <InfoItem
+            label="Preco do servico"
+            value={formatCurrency(ordem.preco_servico)}
+          />
+          <InfoItem
+            label="Preco do material"
+            value={
+              ordem.preco_material != null && ordem.preco_material > 0
+                ? formatCurrency(ordem.preco_material)
+                : null
+            }
+          />
           <InfoItem label="Valor pago" value={formatCurrency(ordem.valor_pago)} />
           <InfoItem
             label="Forma de pagamento"
             value={
-              ordem.forma_pagamento ? FORMA_PAGAMENTO_LABEL[ordem.forma_pagamento] : '—'
+              ordem.forma_pagamento ? FORMA_PAGAMENTO_LABEL[ordem.forma_pagamento] : null
             }
           />
-          <InfoItem label="Criada em" value={formatDate(ordem.created_at)} />
         </div>
-        <p className="mt-2 text-sm">
-          <span className="print-info-label font-semibold">Descricao: </span>
-          {ordem.descricao}
-        </p>
-        {ordem.observacoes && (
-          <p className="mt-1 text-sm">
-            <span className="print-info-label font-semibold">Observacoes: </span>
-            {ordem.observacoes}
-          </p>
-        )}
-      </section>
+      </ReportSection>
 
-      <section className="print-section mb-6">
-        <h2 className="print-section-title mb-2 border-b border-gray-400 pb-1 text-base font-bold">
-          Registros de Producao
-        </h2>
-        {registros.length === 0 ? (
-          <p className="text-sm text-gray-600">Nenhum registro de producao.</p>
-        ) : (
-          <table className="print-table w-full border-collapse text-sm">
-            <thead>
-              <tr>
-                <th className="border border-gray-400 px-2 py-1 text-left">Data</th>
-                <th className="border border-gray-400 px-2 py-1 text-left">Turno</th>
-                <th className="border border-gray-400 px-2 py-1 text-right">Produzidas</th>
-                <th className="border border-gray-400 px-2 py-1 text-right">Defeituosas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {registros.map((registro) => (
-                <tr key={registro.id}>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {formatDate(registro.data)}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {TURNO_LABEL[registro.turno]}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">
-                    {registro.quantidade_produzida}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">
-                    {registro.pecas_defeituosas}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <ReportSection title="Material">
+        <div className="print-info-grid grid grid-cols-2 gap-2">
+          <InfoItem label="Material" value={ordem.material} />
+          <InfoItem label="Codigo / Descricao" value={ordem.codigo_descricao_material} />
+          <InfoItem label="Quantidade" value={ordem.quantidade_material} />
+          <InfoItem label="Lote" value={ordem.lote} />
+          <InfoItem label="Fornecedor" value={ordem.fornecedor} />
+          <InfoItem label="Observacoes" value={ordem.observacoes_material} />
+        </div>
+        {!ordem.material && !ordem.codigo_descricao_material && (
+          <p className="text-sm text-gray-600">Sem dados de material.</p>
         )}
-      </section>
+      </ReportSection>
 
-      <section className="print-section mb-6">
-        <h2 className="print-section-title mb-2 border-b border-gray-400 pb-1 text-base font-bold">
-          Defeitos
-        </h2>
-        {defeitos.length === 0 ? (
-          <p className="text-sm text-gray-600">Nenhum defeito registrado.</p>
-        ) : (
-          <table className="print-table w-full border-collapse text-sm">
-            <thead>
-              <tr>
-                <th className="border border-gray-400 px-2 py-1 text-left">Data</th>
-                <th className="border border-gray-400 px-2 py-1 text-left">Tipo</th>
-                <th className="border border-gray-400 px-2 py-1 text-right">Qtd</th>
-                <th className="border border-gray-400 px-2 py-1 text-left">Causa</th>
-                <th className="border border-gray-400 px-2 py-1 text-left">Acao</th>
-              </tr>
-            </thead>
-            <tbody>
-              {defeitos.map((defeito) => (
-                <tr key={defeito.id}>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {formatDate(defeito.data)}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {defeito.tipo_defeito}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">
-                    {defeito.quantidade}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {defeito.causa_provavel ?? '—'}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {defeito.acao_corretiva ?? '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      <ReportSection title="Producao Diaria">
+        <ReportTable
+          rows={registros}
+          rowKey={(registro) => registro.id}
+          emptyMessage="Nenhum registro de producao."
+          columns={[
+            { header: 'Data', render: (r) => formatDate(r.data) },
+            { header: 'Turno', render: (r) => r.turno },
+            {
+              header: 'Horario',
+              render: (r) =>
+                r.hora_inicio && r.hora_fim
+                  ? `${r.hora_inicio} - ${r.hora_fim}`
+                  : (r.hora_inicio ?? r.hora_fim ?? '—'),
+            },
+            { header: 'Maquina', render: (r) => r.maquina_utilizada ?? '—' },
+            { header: 'Operacao', render: (r) => r.descricao_operacao },
+            {
+              header: 'Defeitos',
+              align: 'right',
+              render: (r) => String(r.pecas_defeituosas),
+            },
+          ]}
+        />
+      </ReportSection>
 
-      <section className="print-section">
-        <h2 className="print-section-title mb-2 border-b border-gray-400 pb-1 text-base font-bold">
-          Movimentos Financeiros
-        </h2>
-        {movimentos.length === 0 ? (
-          <p className="text-sm text-gray-600">Nenhum movimento financeiro.</p>
-        ) : (
-          <table className="print-table w-full border-collapse text-sm">
-            <thead>
-              <tr>
-                <th className="border border-gray-400 px-2 py-1 text-left">Data</th>
-                <th className="border border-gray-400 px-2 py-1 text-left">Tipo</th>
-                <th className="border border-gray-400 px-2 py-1 text-right">Valor</th>
-                <th className="border border-gray-400 px-2 py-1 text-left">Descricao</th>
-              </tr>
-            </thead>
-            <tbody>
-              {movimentos.map((movimento) => (
-                <tr key={movimento.id}>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {formatDate(movimento.data)}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {TIPO_MOVIMENTO_LABEL[movimento.tipo]}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">
-                    {formatCurrency(movimento.valor)}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1">
-                    {movimento.descricao ?? '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+      <ReportSection title="Pecas Defeituosas">
+        <ReportTable
+          rows={defeitos}
+          rowKey={(defeito) => defeito.id}
+          emptyMessage="Nenhum defeito registrado."
+          columns={[
+            { header: 'Data', render: (d) => formatDate(d.data) },
+            { header: 'Tipo', render: (d) => d.tipo_defeito },
+            { header: 'Qtd', align: 'right', render: (d) => String(d.quantidade) },
+            { header: 'Causa provavel', render: (d) => d.causa_provavel ?? '—' },
+            { header: 'Acao corretiva', render: (d) => d.acao_corretiva ?? '—' },
+          ]}
+        />
+      </ReportSection>
+
+      <ReportSection title="Movimentos Financeiros">
+        <ReportTable
+          rows={movimentos}
+          rowKey={(movimento) => movimento.id}
+          emptyMessage="Nenhum movimento financeiro."
+          columns={[
+            { header: 'Data', render: (m) => formatDate(m.data) },
+            { header: 'Tipo', render: (m) => TIPO_MOVIMENTO_LABEL[m.tipo] },
+            {
+              header: 'Valor',
+              align: 'right',
+              render: (m) =>
+                `${m.tipo === 'estorno' ? '-' : ''}${formatCurrency(m.valor)}`,
+            },
+            { header: 'Descricao', render: (m) => m.descricao ?? '—' },
+          ]}
+        />
         <p className="print-total mt-3 border-t-2 border-gray-900 pt-2 text-right text-base font-bold">
-          Saldo em aberto:{' '}
-          {formatCurrency(Math.max(0, (ordem.valor_total ?? 0) - ordem.valor_pago))}
+          Saldo em aberto: {formatCurrency(saldoDevedor(ordem))}
         </p>
-      </section>
+      </ReportSection>
     </ReportShell>
   )
 }

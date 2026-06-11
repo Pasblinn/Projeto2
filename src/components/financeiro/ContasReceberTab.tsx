@@ -10,7 +10,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { registrarPagamento, saldoDevedor } from '@/services/financeiro'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao } from '@/types'
-import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
+import { formatCurrency, formatDate } from '@/utils/format'
 
 function today(): string {
   return new Date().toISOString().slice(0, 10)
@@ -49,7 +49,7 @@ function ContasReceberTab() {
       ordens.filter(
         (ordem) =>
           ordem.status_financeiro !== 'cancelado' &&
-          (ordem.valor_total ?? 0) > 0 &&
+          (ordem.preco_servico ?? 0) > 0 &&
           saldoDevedor(ordem) > 0,
       ),
     [ordens],
@@ -81,7 +81,7 @@ function ContasReceberTab() {
         descricao.trim() || null,
         user.id,
       )
-      toast.success(`Pagamento registrado em ${formatOpCode(pagando.numero)}`)
+      toast.success(`Pagamento registrado em ${pagando.codigo}`)
       setPagando(null)
       await load()
     } catch (err) {
@@ -126,15 +126,15 @@ function ContasReceberTab() {
                 {contas.map((ordem) => (
                   <tr key={ordem.id}>
                     <td className="px-4 py-3 font-medium text-gray-900">
-                      {formatOpCode(ordem.numero)}
+                      {ordem.codigo}
                     </td>
                     <td className="px-4 py-3">{ordem.cliente}</td>
-                    <td className="px-4 py-3">{formatDate(ordem.data_entrega)}</td>
+                    <td className="px-4 py-3">{formatDate(ordem.data_termino)}</td>
                     <td className="px-4 py-3">
                       <StatusBadge kind="financeiro" status={ordem.status_financeiro} />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {formatCurrency(ordem.valor_total)}
+                      {formatCurrency(ordem.preco_servico)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {formatCurrency(ordem.valor_pago)}
@@ -162,7 +162,7 @@ function ContasReceberTab() {
       <Modal
         open={pagando != null}
         onClose={() => setPagando(null)}
-        title={`Pagamento - ${pagando ? formatOpCode(pagando.numero) : ''}`}
+        title={`Pagamento - ${pagando ? pagando.codigo : ''}`}
         size="sm"
       >
         {pagando && (

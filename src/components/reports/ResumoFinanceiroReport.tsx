@@ -9,7 +9,6 @@ import type { MovimentoFinanceiro, OrdemProducao } from '@/types'
 import {
   formatCurrency,
   formatDate,
-  formatOpCode,
   TIPO_MOVIMENTO_LABEL,
 } from '@/utils/format'
 
@@ -43,7 +42,7 @@ function ResumoFinanceiroReport({ params }: ReportProps) {
   )
   const ativas = data.ordens.filter((ordem) => ordem.status_financeiro !== 'cancelado')
   const emAberto = ativas.reduce((sum, ordem) => sum + saldoDevedor(ordem), 0)
-  const faturamento = ativas.reduce((sum, ordem) => sum + (ordem.valor_total ?? 0), 0)
+  const faturamento = ativas.reduce((sum, ordem) => sum + ordem.preco_servico, 0)
 
   const ordensById = new Map(data.ordens.map((ordem) => [ordem.id, ordem]))
 
@@ -83,7 +82,7 @@ function ResumoFinanceiroReport({ params }: ReportProps) {
               header: 'OP',
               render: (m) => {
                 const ordem = ordensById.get(m.ordem_producao_id)
-                return ordem ? formatOpCode(ordem.numero) : '—'
+                return ordem ? ordem.codigo : '—'
               },
             },
             {

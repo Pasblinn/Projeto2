@@ -20,7 +20,7 @@ export async function listRegistros(ordemId?: string): Promise<RegistroProducao[
   const registros = listRows(COLLECTION).filter(
     (registro) => !ordemId || registro.ordem_producao_id === ordemId,
   )
-  return registros.sort((a, b) => b.created_at.localeCompare(a.created_at))
+  return registros.sort((a, b) => b.data.localeCompare(a.data) || b.created_at.localeCompare(a.created_at))
 }
 
 export async function createRegistro(
@@ -32,24 +32,27 @@ export async function createRegistro(
     throw new Error('Ordem de producao nao encontrada')
   }
 
-  const registro = insertRow(COLLECTION, {
+  return insertRow(COLLECTION, {
     id: generateId(),
     ordem_producao_id: input.ordem_producao_id,
     data: input.data,
     turno: input.turno,
-    quantidade_produzida: input.quantidade_produzida,
+    hora_inicio: input.hora_inicio ?? null,
+    hora_fim: input.hora_fim ?? null,
+    descricao_operacao: input.descricao_operacao,
+    maquina_utilizada: input.maquina_utilizada ?? null,
     pecas_defeituosas: input.pecas_defeituosas,
     observacoes: input.observacoes ?? null,
     registrado_por: registradoPor,
     created_at: nowIso(),
   })
+}
 
-  updateRow('ordens_producao', ordem.id, {
-    quantidade_produzida: ordem.quantidade_produzida + input.quantidade_produzida,
-    updated_at: nowIso(),
-  })
-
-  return registro
+export async function updateRegistro(
+  id: string,
+  input: Partial<NovoRegistroProducao>,
+): Promise<RegistroProducao> {
+  return updateRow(COLLECTION, id, input)
 }
 
 export async function listDefeitos(ordemId?: string): Promise<RegistroDefeito[]> {

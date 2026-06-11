@@ -14,7 +14,6 @@ import type { ReportParams } from '@/components/reports/types'
 import { useToast } from '@/contexts/ToastContext'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao } from '@/types'
-import { formatOpCode } from '@/utils/format'
 
 type ParamNeed = 'ordem' | 'cliente' | 'periodo'
 
@@ -102,7 +101,7 @@ function Relatorios() {
 
   const ordemOptions = ordens.map((ordem) => ({
     value: ordem.id,
-    label: `${formatOpCode(ordem.numero)} - ${ordem.cliente}`,
+    label: `${ordem.codigo} - ${ordem.cliente}`,
   }))
 
   const clienteOptions = useMemo(() => {

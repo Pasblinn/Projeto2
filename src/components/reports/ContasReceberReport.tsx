@@ -6,7 +6,7 @@ import type { ReportProps } from '@/components/reports/types'
 import { saldoDevedor } from '@/services/financeiro'
 import { listOrdens } from '@/services/ordens'
 import type { OrdemProducao } from '@/types'
-import { formatCurrency, formatDate, formatOpCode } from '@/utils/format'
+import { formatCurrency, formatDate } from '@/utils/format'
 
 const STATUS_LABEL: Record<OrdemProducao['status_financeiro'], string> = {
   pendente: 'Pendente',
@@ -34,7 +34,7 @@ function ContasReceberReport(_props: ReportProps) {
   const contas = ordens.filter(
     (ordem) =>
       ordem.status_financeiro !== 'cancelado' &&
-      (ordem.valor_total ?? 0) > 0 &&
+      (ordem.preco_servico ?? 0) > 0 &&
       saldoDevedor(ordem) > 0,
   )
   const totalAberto = contas.reduce((sum, ordem) => sum + saldoDevedor(ordem), 0)
@@ -50,14 +50,14 @@ function ContasReceberReport(_props: ReportProps) {
           rowKey={(ordem) => ordem.id}
           emptyMessage="Nenhuma conta a receber."
           columns={[
-            { header: 'OP', render: (o) => formatOpCode(o.numero) },
+            { header: 'OP', render: (o) => o.codigo },
             { header: 'Cliente', render: (o) => o.cliente },
-            { header: 'Entrega', render: (o) => formatDate(o.data_entrega) },
+            { header: 'Entrega', render: (o) => formatDate(o.data_termino) },
             { header: 'Status', render: (o) => STATUS_LABEL[o.status_financeiro] },
             {
               header: 'Valor total',
               align: 'right',
-              render: (o) => formatCurrency(o.valor_total),
+              render: (o) => formatCurrency(o.preco_servico),
             },
             {
               header: 'Pago',
