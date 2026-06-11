@@ -117,6 +117,21 @@ Empacotamento como aplicacao desktop para Windows.
 - [x] `chore: add app icons`
 - [x] `docs: add build and distribution instructions`
 
+## Refatoracao - Fidelidade ao Modelo Oficial de OPs (concluida)
+
+A OP foi alinhada ao modelo do sistema oficial da RJ Usinagem: codigo
+sequencial por ano (OP-ANO-NNNN), secao de material, cliente com CNPJ,
+nome da peca com unidade, precos de servico e material separados,
+aprovacao com nome do supervisor (trava edicao), cronometro de
+preparacao de maquina e producao diaria/defeitos registrados na propria
+pagina da OP (a pagina separada de producao foi removida).
+
+- [x] `refactor: align OP module with official RJ Usinagem model`
+- [x] `feat: add machine setup timer to OP details`
+- [x] `feat: add demo data seeding from login screen`
+- [x] `fix: prevent duplicate seed users on concurrent initialization`
+- [x] `docs: update manual for the official OP workflow`
+
 ## Fase 11 - Documentacao Final (concluida)
 
 - [x] `docs: add user manual (MANUAL_USUARIO.md)`

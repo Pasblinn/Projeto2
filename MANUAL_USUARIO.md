@@ -27,32 +27,34 @@ Usuarios padrao do primeiro acesso (troque as senhas em uso real):
 
 Tela inicial com a lista de OPs. Recursos:
 
-- **Busca e filtros** por cliente, status de producao e financeiro.
-- **Nova OP**: botao no topo (apenas Chefe/Financeiro). Preencha tipo
-  (encomenda ou estoque), cliente, descricao, quantidade e, se
-  desejar, data de entrega, valor e forma de pagamento.
+- **Busca e filtros** por cliente, peca, codigo, status de producao e
+  financeiro.
+- **Nova OP**: botao no topo (apenas Chefe/Financeiro). O formulario eh
+  dividido em secoes: dados gerais (tipo, datas de inicio/termino),
+  material (material, codigo, quantidade, lote, fornecedor), cliente e
+  peca (cliente, CNPJ, nome da peca, quantidade + unidade, preco do
+  servico e preco gasto com material), producao (maquina, operador
+  responsavel) e financeiro.
+- O codigo da OP eh gerado automaticamente no formato `OP-ANO-NNNN`.
 - Clique em uma OP para abrir os **detalhes**.
 
 ## 3. Detalhes da OP
 
-Na pagina da OP voce pode:
+Toda a operacao da OP acontece nesta pagina:
 
-1. **Aprovar** a OP (Chefe/Financeiro). OPs so entram em producao
-   depois de aprovadas.
-2. **Controlar a producao**: Iniciar, Pausar, Retomar, Finalizar ou
-   Cancelar.
-3. **Editar** os dados da OP.
-4. Acompanhar a **barra de producao acumulada** (produzido / total).
-
-## 4. Registrar Producao
-
-Menu "Registrar Producao" (Chefe/Financeiro):
-
-- Selecione a OP, a data e o turno (manha/tarde/noite), informe a
-  quantidade produzida e as pecas defeituosas. O total produzido da OP
-  eh atualizado automaticamente.
-- **Registro de Defeitos**: registre tipo de defeito, quantidade,
-  causa provavel e acao corretiva. O historico aparece logo abaixo.
+1. **Controlar a producao** no topo: Iniciar, Pausar, Retomar,
+   Finalizar ou Cancelar.
+2. **Aprovar** a OP (Chefe/Financeiro): informe o nome do supervisor.
+   Apos aprovada, a OP nao pode mais ser editada.
+3. **Editar** (somente enquanto nao aprovada) e **Excluir** (remove
+   tambem producao, defeitos e movimentos associados).
+4. **Preparacao da Maquina**: cronometro de setup com Iniciar/Pausar;
+   o tempo acumulado fica salvo na OP.
+5. **Producao Diaria**: registre cada operacao com data, turno, hora
+   de inicio/fim, descricao da operacao realizada, maquina e pecas
+   defeituosas. Os registros podem ser editados.
+6. **Pecas Defeituosas**: registre tipo de defeito, quantidade, causa
+   provavel e acao corretiva.
 
 ## 5. Financeiro
 
