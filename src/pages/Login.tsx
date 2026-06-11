@@ -2,7 +2,6 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
-import { seedDemoData } from '@/services/seed'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
 import Input from '@/components/Input'
@@ -19,7 +18,6 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [seeding, setSeeding] = useState(false)
 
   const redirectTo = (location.state as LocationState | null)?.from ?? '/dashboard'
 
@@ -43,20 +41,6 @@ function Login() {
       toast.error(message)
     } finally {
       setSubmitting(false)
-    }
-  }
-
-  async function handleSeed() {
-    if (seeding) return
-    setSeeding(true)
-    try {
-      await seedDemoData()
-      toast.success('Dados de demonstracao carregados; entre com admin@rjusinagem.com.br')
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Falha ao carregar demonstracao'
-      toast.error(message)
-    } finally {
-      setSeeding(false)
     }
   }
 
@@ -95,18 +79,6 @@ function Login() {
             Entrar
           </Button>
         </form>
-
-        <div className="mt-4 border-t border-gray-100 pt-3 text-center">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            loading={seeding}
-            onClick={handleSeed}
-          >
-            Carregar dados de demonstracao
-          </Button>
-        </div>
       </Card>
     </div>
   )

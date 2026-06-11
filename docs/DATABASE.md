@@ -53,11 +53,6 @@ Na primeira execucao a tabela `users` eh semeada com tres usuarios:
 
 > Troque as senhas padrao apos o primeiro acesso em ambiente real.
 
-## Dados de demonstracao
-
-O botao **"Carregar dados de demonstracao"** na tela de login popula o
-banco com um cenario realista (so funciona com o banco vazio).
-
 ## Onde os dados ficam
 
 - **Navegador (dev)**: IndexedDB do site (`/pglite/rjusinagem`).

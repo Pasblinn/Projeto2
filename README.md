@@ -121,13 +121,10 @@ npm install
 npm run dev        # http://localhost:5173
 ```
 
-### Dados de demonstracao
+### Primeiro acesso
 
-Na tela de login, clique em **"Carregar dados de demonstracao"** para
-popular o banco com um cenario realista (OPs em todos os status,
-producao, defeitos, orcamentos, pagamentos e nota fiscal).
-
-Usuarios padrao do primeiro acesso:
+Na primeira execucao o banco eh criado vazio e os usuarios padrao sao
+semeados automaticamente:
 
 | E-mail | Senha | Perfil |
 | ------ | ----- | ------ |
