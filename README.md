@@ -1,108 +1,169 @@
-# RJ Usinagem - Sistema de Gestao de Producao
+# RJ Usinagem — Sistema de Gestao de Producao
 
-Sistema desktop para gestao de Ordens de Producao (OPs) e controle
-financeiro da RJ Usinagem.
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Electron](https://img.shields.io/badge/Electron-42-47848F?logo=electron&logoColor=white)
+![Status](https://img.shields.io/badge/status-concluido-success)
 
-## Visao Geral
+Sistema desktop para gestao industrial de uma usinagem: controle completo de
+**Ordens de Producao (OPs)**, registro de producao diaria no chao de fabrica,
+**modulo financeiro** (orcamentos, contas a receber, faturamento) e
+**relatorios imprimiveis em A4** — funcionando 100% offline, com banco de
+dados local.
 
-Aplicacao completa de gestao industrial desenvolvida com React e TypeScript,
-com banco de dados local (sem backend remoto). Projetada para ser simples e
-visual, ideal para usuarios sem experiencia previa com sistemas ERP.
+## Sumario
 
-### Caracteristicas
+- [Funcionalidades](#funcionalidades)
+- [Stack Tecnica](#stack-tecnica)
+- [Arquitetura](#arquitetura)
+- [Como Rodar](#como-rodar)
+- [Builds de Producao](#builds-de-producao)
+- [Documentacao](#documentacao)
+- [Equipe](#equipe)
+- [Licenca](#licenca)
 
-- Desktop app para Windows (via Electron)
-- Banco de dados local (localStorage), funciona 100% offline
-- Interface limpa com Tailwind CSS
-- 3 niveis de permissao: Financeiro, Chefe e Operador
-- Gestao de Ordens de Producao do orcamento ao pagamento
-- Controle financeiro com relatorios imprimiveis em A4
+## Funcionalidades
+
+### Ordens de Producao
+
+- Codigo sequencial por ano (`OP-2026-0001`), gerado automaticamente
+- Cadastro completo: datas de inicio/termino, secao de **material**
+  (material, codigo, quantidade, lote, fornecedor), cliente com CNPJ,
+  nome da peca, quantidade com unidade, **preco do servico** e **preco
+  gasto com material**, maquina utilizada e operador responsavel
+- **Aprovacao por supervisor** (nome e data registrados); apos aprovada,
+  a OP fica travada para edicao
+- Controle de status: criada → em producao → pausada/finalizada/cancelada
+- **Cronometro de preparacao de maquina** (setup) com tempo acumulado
+- **Producao diaria** registrada na propria OP: turno, horario de
+  inicio/fim, descricao da operacao realizada, maquina e pecas defeituosas
+- **Registro de defeitos** com tipo, causa provavel e acao corretiva
+- Exclusao em cascata (producao, defeitos, movimentos e notas associados)
+
+### Financeiro (6 abas)
+
+- **Dashboard**: faturamento total, recebido, a receber e maiores saldos
+- **Orcamentos**: CRUD com fluxo rascunho → enviado → aprovado/reprovado
+  e **conversao de orcamento aprovado em OP** com um clique
+- **Contas a Receber**: baixa de pagamentos (total ou parcial) com
+  atualizacao automatica do status financeiro (pendente/parcial/pago/atrasado)
+- **OPs e Financeiro**: ledger completo de movimentos (pagamentos,
+  estornos, ajustes e custos extras) com filtro por OP
+- **Faturamento**: emissao de nota fiscal interna com numeracao sequencial
+- **Relatorios**: atalho para a central de relatorios
+
+### Relatorios (impressao A4)
+
+1. Ficha de OP (dados gerais, material, producao, defeitos e financeiro)
+2. Resumo Financeiro por periodo
+3. Contas a Receber
+4. Historico do Cliente
+5. Producao por Periodo
+6. OPs por Status
+
+### Seguranca e perfis
+
+- Autenticacao local com senha em hash SHA-256
+- 3 niveis de permissao com guarda de rotas e menu dinamico:
+
+| Perfil | Permissoes |
+| ------ | ---------- |
+| Financeiro | Acesso total (OPs, financeiro, relatorios) |
+| Chefe de Producao | OPs, aprovacao e registro de producao |
+| Operador | Visualiza OPs e atualiza status de producao |
 
 ## Stack Tecnica
 
-| Tecnologia       | Versao | Uso                              |
-| ---------------- | ------ | -------------------------------- |
-| React            | 18.2   | Biblioteca de UI                 |
-| TypeScript       | 5.3    | Tipagem estatica                 |
-| Vite             | 5.0    | Build tool e dev server          |
-| Tailwind CSS     | 3.4    | Framework CSS utilitario         |
-| PostCSS          | 8.4    | Processamento de CSS             |
+| Tecnologia | Uso |
+| ---------- | --- |
+| React 18 + TypeScript 5 | Interface e tipagem estatica |
+| Vite 5 | Build tool e dev server |
+| Tailwind CSS 3 | Estilizacao |
+| React Router 6 (HashRouter) | Navegacao (compativel com `file://`) |
+| lucide-react | Icones |
+| Electron 42 + electron-builder | Empacotamento desktop (Windows/Linux) |
+| localStorage | Banco de dados local (sem backend remoto) |
 
-Dependencias adicionais serao introduzidas em commits subsequentes:
-React Router, Electron, etc. Ver [docs/DATABASE.md](docs/DATABASE.md) para
-detalhes do banco de dados local.
+## Arquitetura
 
-## Pre-requisitos
+O banco de dados eh **local apenas**: todas as colecoes (usuarios, OPs,
+registros de producao, defeitos, orcamentos, movimentos financeiros e
+notas fiscais) vivem no `localStorage`, gravadas de forma atomica por uma
+camada unica de persistencia. Detalhes em [docs/DATABASE.md](docs/DATABASE.md).
 
-- Node.js 18 ou superior
-- npm
+```text
+src/
+├── components/        # Design system (Button, Card, Modal, Toast...)
+│   ├── financeiro/    # Abas do modulo financeiro
+│   └── reports/       # Relatorios imprimiveis em A4
+├── contexts/          # AuthContext, ToastContext
+├── pages/             # Login, Dashboard, OrdemDetalhes, Financeiro, Relatorios
+├── services/          # db (persistencia), auth, ordens, producao,
+│                      # orcamentos, financeiro, faturamento, seed
+├── types/             # Tipos de dominio
+└── utils/             # Formatacao (moeda, data, labels)
+electron/              # Main e preload do app desktop
+docs/                  # Documentacao tecnica
+```
 
-## Instalacao
+## Como Rodar
+
+Pre-requisitos: Node.js 18+ e npm.
 
 ```bash
 git clone https://github.com/Pasblinn/Projeto2.git
 cd Projeto2
 npm install
+npm run dev        # http://localhost:5173
 ```
 
-## Scripts Disponiveis
+### Dados de demonstracao
+
+Na tela de login, clique em **"Carregar dados de demonstracao"** para
+popular o banco com um cenario realista (OPs em todos os status,
+producao, defeitos, orcamentos, pagamentos e nota fiscal).
+
+Usuarios padrao do primeiro acesso:
+
+| E-mail | Senha | Perfil |
+| ------ | ----- | ------ |
+| `admin@rjusinagem.com.br` | `admin123` | Financeiro |
+| `chefe@rjusinagem.com.br` | `chefe123` | Chefe de Producao |
+| `operador@rjusinagem.com.br` | `operador123` | Operador |
+
+## Builds de Producao
 
 ```bash
-npm run dev             # Inicia o servidor de desenvolvimento em localhost:5173
-npm run build           # Build de producao (type check + Vite build)
-npm run preview         # Preview do build de producao
-npm run electron:dev    # Janela Electron apontando para o dev server
-npm run electron:build  # Gera instalador Windows em release/
+npm run build                # build web (dist/)
+npm run electron:build:linux # AppImage Linux (release/)
+npm run electron:build       # instalador Windows NSIS (requer Windows ou Wine)
 ```
 
-Ver [docs/BUILD.md](docs/BUILD.md) para detalhes de build e distribuicao.
+O AppImage gerado em `release/` roda com clique duplo, sem instalacao.
+Guia completo em [docs/BUILD.md](docs/BUILD.md).
 
-## Estrutura do Projeto
+## Documentacao
 
-```
-Projeto2/
-├── src/
-│   ├── App.tsx           # Componente raiz
-│   ├── main.tsx          # Entry point React
-│   ├── index.css         # Tailwind + estilos globais + print CSS
-│   └── vite-env.d.ts     # Tipos para import.meta.env
-├── index.html            # HTML template
-├── vite.config.ts        # Configuracao do Vite (com alias @/*)
-├── tailwind.config.js    # Tema Tailwind (cores primary customizadas)
-├── postcss.config.js     # PostCSS com Tailwind + autoprefixer
-├── tsconfig.json         # TypeScript strict + paths
-├── tsconfig.node.json    # TS config para vite.config.ts
-└── package.json
-```
+- [Manual do Usuario](MANUAL_USUARIO.md)
+- [Banco de Dados Local](docs/DATABASE.md)
+- [Build e Distribuicao](docs/BUILD.md)
+- [Roadmap de Desenvolvimento](docs/ROADMAP.md)
+- [Checklist de Implantacao](PROXIMOS_PASSOS.md)
+- [Arquitetura](docs/ARCHITECTURE.md) e [Contribuicao](docs/CONTRIBUTING.md)
 
-## Path Aliases
+## Equipe
 
-Imports limpos usando `@/` como atalho para `src/`:
-
-```ts
-import Button from '@/components/Button'
-import { listRows } from '@/services/db'
-```
-
-## Roadmap de Desenvolvimento
-
-O projeto foi construido de forma incremental, commit por commit.
-Fases concluidas:
-
-1. **Fundacao** - Vite, TypeScript, Tailwind, aliases
-2. **Design System** - Componentes base (Button, Input, Card, Modal, Toast)
-3. **Banco Local + Auth** - Persistencia local, contexto de autenticacao, login
-4. **Layout e Rotas** - Layout autenticado, rotas protegidas
-5. **Ordens de Producao** - CRUD, aprovacao, status
-6. **Registro de Producao** - Producao diaria, defeitos
-7. **Modulo Financeiro** - Orcamentos, contas a receber, faturamento
-8. **Relatorios** - 6 tipos imprimiveis em A4
-9. ~~Ponto Eletronico~~ - removido do escopo
-10. **Electron** - App desktop para Windows
-11. **Documentacao Final** - Manual do usuario, deploy
-
-Ver `docs/ROADMAP.md` para detalhes de cada fase.
+| Integrante |
+| ---------- |
+| Pablo Tadini |
+| Raul Souza |
+| Rafael Adonis |
+| Gabriel Maestre |
+| Gabriel Capri |
 
 ## Licenca
 
-Propriedade da RJ Usinagem - Todos os direitos reservados.
+Projeto academico desenvolvido para a disciplina — propriedade da equipe.
+Todos os direitos reservados.
