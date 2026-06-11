@@ -68,15 +68,24 @@ export async function registrarMovimento(
     created_at: nowIso(),
   })
 
-  // Estornos devolvem valor ao cliente; demais movimentos abatem o saldo.
-  const delta = input.tipo === 'estorno' ? -input.valor : input.valor
-  const valorPago = Math.max(0, ordem.valor_pago + delta)
-
-  updateRow('ordens_producao', ordem.id, {
-    valor_pago: valorPago,
-    status_financeiro: statusFinanceiroFor(ordem, valorPago),
-    updated_at: nowIso(),
-  })
+  // Pagamentos e ajustes abatem o saldo; estornos devolvem valor ao
+  // cliente; custos extras sao despesa interna e nao tocam o recebido.
+  const DELTA_FACTOR: Record<TipoMovimento, number> = {
+    pagamento: 1,
+    pagamento_parcial: 1,
+    ajuste: 1,
+    estorno: -1,
+    custo_extra: 0,
+  }
+  const delta = DELTA_FACTOR[input.tipo] * input.valor
+  if (delta !== 0) {
+    const valorPago = Math.max(0, ordem.valor_pago + delta)
+    updateRow('ordens_producao', ordem.id, {
+      valor_pago: valorPago,
+      status_financeiro: statusFinanceiroFor(ordem, valorPago),
+      updated_at: nowIso(),
+    })
+  }
 
   return movimento
 }

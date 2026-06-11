@@ -94,8 +94,18 @@ export async function updateStatusProducao(
   id: string,
   status: StatusProducao,
 ): Promise<OrdemProducao> {
+  const ordem = await getOrdem(id)
+
+  // Cancelling an order with nothing received also closes its finance
+  // side, so it stops showing up in contas a receber.
+  const statusFinanceiro =
+    status === 'cancelada' && ordem.valor_pago === 0
+      ? 'cancelado'
+      : ordem.status_financeiro
+
   return updateRow(COLLECTION, id, {
     status_producao: status,
+    status_financeiro: statusFinanceiro,
     updated_at: nowIso(),
   })
 }
