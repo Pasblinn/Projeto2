@@ -2,6 +2,8 @@
   "name": "rj-usinagem",
   "private": true,
   "version": "0.1.0",
+  "description": "Sistema de gestao de Ordens de Producao e financeiro da RJ Usinagem",
+  "author": "Pasblinn",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -31,9 +33,7 @@
       "target": "AppImage",
       "icon": "build/icon.png",
       "category": "Office",
-      "synopsis": "Sistema de gestao de OPs e financeiro da RJ Usinagem",
-      "desktopName": "rj-usinagem.desktop",
-      "syncDesktopName": true
+      "synopsis": "Sistema de gestao de OPs e financeiro da RJ Usinagem"
     },
     "nsis": {
       "oneClick": false,
