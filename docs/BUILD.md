@@ -25,6 +25,15 @@ npm run build        # type check + bundle em dist/
 npm run preview      # serve o build localmente para conferencia
 ```
 
+## AppImage Linux (Electron)
+
+```bash
+npm run electron:build:linux
+```
+
+Gera `release/RJ Usinagem-<versao>.AppImage`. Basta dar permissao de
+execucao (`chmod +x`) e rodar com clique duplo — nao precisa instalar.
+
 ## Instalador Windows (Electron)
 
 ```bash
