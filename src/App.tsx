@@ -7,6 +7,7 @@ import RoleGuard from '@/components/RoleGuard'
 import AppLayout from '@/components/AppLayout'
 import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
+import OrdensProducao from '@/pages/OrdensProducao'
 import OrdemDetalhes from '@/pages/OrdemDetalhes'
 import Financeiro from '@/pages/Financeiro'
 import Relatorios from '@/pages/Relatorios'
@@ -31,7 +32,7 @@ function App() {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/ordens" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/ordens" element={<OrdensProducao />} />
               <Route path="/ordens/:id" element={<OrdemDetalhes />} />
               <Route
                 path="/financeiro"

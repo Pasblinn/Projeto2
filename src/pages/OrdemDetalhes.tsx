@@ -217,7 +217,7 @@ function OrdemDetalhes() {
     try {
       await deleteOrdem(ordem.id)
       toast.success(`${ordem.codigo} excluida`)
-      navigate('/dashboard')
+      navigate('/ordens')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Falha ao excluir a OP')
     }
@@ -349,7 +349,7 @@ function OrdemDetalhes() {
           {error ?? 'Ordem nao encontrada.'}
         </p>
         <div className="text-center">
-          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+          <Button variant="secondary" onClick={() => navigate('/ordens')}>
             Voltar
           </Button>
         </div>
@@ -367,7 +367,7 @@ function OrdemDetalhes() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')}>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/ordens')}>
             Voltar
           </Button>
           <div>
