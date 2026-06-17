@@ -79,7 +79,7 @@ Modelagem (detalhes em [DATABASE.md](DATABASE.md)):
 | ---------- | ------------------ | --------- | ---------- |
 | Operador    | Ver, criar, editar | Registrar | -          |
 | Encarregado | Tudo               | Registrar | Tudo       |
-| Financeiro  | Tudo               | Registrar | Tudo       |
+| Dono        | Tudo               | Registrar | Tudo       |
 
 Enforcement: rotas protegidas (`ProtectedRoute` + `RoleGuard`) e menu
 dinamico por role. Como o app eh local e mono-usuario por maquina, o

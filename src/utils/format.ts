@@ -23,6 +23,30 @@ export function formatDate(value?: string | null): string {
   return dateFormatter.format(parsed)
 }
 
+const MESES_ABREV = [
+  'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
+  'jul', 'ago', 'set', 'out', 'nov', 'dez',
+]
+
+// 'YYYY-MM' -> 'mai/26'
+export function formatMonth(value: string): string {
+  const [ano, mes] = value.split('-')
+  const idx = Number(mes) - 1
+  if (idx < 0 || idx > 11) return value
+  return `${MESES_ABREV[idx]}/${ano.slice(2)}`
+}
+
+// '2026-06-17' -> '17/06'
+export function formatDayMonth(value: string): string {
+  const [, mes, dia] = value.split('-')
+  if (!mes || !dia) return value
+  return `${dia}/${mes}`
+}
+
+export function formatPercent(value: number): string {
+  return `${value.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`
+}
+
 export const TIPO_OP_LABEL: Record<TipoOP, string> = {
   encomenda: 'Encomenda',
   estoque: 'Estoque',

@@ -1,6 +1,8 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { CheckCircle2 } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import StatusBadge from '@/components/StatusBadge'
@@ -104,9 +106,12 @@ function ContasReceberTab() {
         padding="none"
       >
         {contas.length === 0 ? (
-          <p className="p-6 text-sm text-gray-600">
-            Nenhuma conta a receber. Todas as OPs com valor estao quitadas.
-          </p>
+          <EmptyState
+            compact
+            icon={CheckCircle2}
+            title="Nenhuma conta a receber"
+            description="Todas as OPs com valor estao quitadas."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">

@@ -15,8 +15,8 @@ import Forbidden from '@/pages/Forbidden'
 import NotFound from '@/pages/NotFound'
 import type { UserRole } from '@/types'
 
-// Quem enxerga tudo: encarregado e financeiro. Operador fica restrito as OPs.
-const GESTORES: UserRole[] = ['financeiro', 'encarregado']
+// Quem enxerga tudo: dono e encarregado. Operador fica restrito as OPs.
+const GESTORES: UserRole[] = ['dono', 'encarregado']
 
 function App() {
   // HashRouter: in the packaged Electron app the page loads via file://,

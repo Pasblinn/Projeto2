@@ -33,7 +33,7 @@ const SEED_USERS: SeedUser[] = [
   {
     email: 'admin@rjusinagem.com.br',
     nome: 'Administrador',
-    role: 'financeiro',
+    role: 'dono',
     password: 'admin123',
   },
   {

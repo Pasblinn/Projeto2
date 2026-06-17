@@ -47,7 +47,7 @@ Na primeira execucao a tabela `users` eh semeada com tres usuarios:
 
 | E-mail | Senha | Papel |
 |--------|-------|-------|
-| `admin@rjusinagem.com.br` | `admin123` | Financeiro (acesso total) |
+| `admin@rjusinagem.com.br` | `admin123` | Dono (acesso total) |
 | `encarregado@rjusinagem.com.br` | `encarregado123` | Encarregado |
 | `operador@rjusinagem.com.br` | `operador123` | Operador |
 

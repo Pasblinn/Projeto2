@@ -27,6 +27,14 @@ Sistema desktop para gestao industrial de uma usinagem: controle completo de
 
 ## Funcionalidades
 
+### Dashboard executivo (visao do dono)
+
+- **KPIs industriais**: faturamento, recebido e a receber, margem estimada
+  (servico vs. custo de material), taxa de refugo, OPs ativas e atrasadas
+- **Graficos** (recharts): faturamento e recebimento por mes, OPs por
+  status (rosca), producao diaria (operacoes x defeituosas) e top clientes
+- Metricas calculadas no banco com SQL (`GROUP BY`, `SUM`, `GREATEST`)
+
 ### Ordens de Producao
 
 - Codigo sequencial por ano (`OP-2026-0001`), gerado automaticamente
@@ -71,7 +79,7 @@ Sistema desktop para gestao industrial de uma usinagem: controle completo de
 
 | Perfil | Permissoes |
 | ------ | ---------- |
-| Financeiro | Acesso total (OPs, financeiro, relatorios) |
+| Dono | Acesso total (OPs, financeiro, relatorios) |
 | Encarregado | Acesso total (OPs, financeiro, relatorios) |
 | Operador | Restrito as OPs: ve, cria, edita e registra producao |
 
@@ -103,7 +111,7 @@ src/
 ├── contexts/          # AuthContext, ToastContext
 ├── pages/             # Login, Dashboard, OrdemDetalhes, Financeiro, Relatorios
 ├── services/          # db (persistencia), auth, ordens, producao,
-│                      # orcamentos, financeiro, faturamento, seed
+│                      # orcamentos, financeiro, faturamento, metrics
 ├── types/             # Tipos de dominio
 └── utils/             # Formatacao (moeda, data, labels)
 electron/              # Main e preload do app desktop
@@ -128,7 +136,7 @@ semeados automaticamente:
 
 | E-mail | Senha | Perfil |
 | ------ | ----- | ------ |
-| `admin@rjusinagem.com.br` | `admin123` | Financeiro |
+| `admin@rjusinagem.com.br` | `admin123` | Dono |
 | `encarregado@rjusinagem.com.br` | `encarregado123` | Encarregado |
 | `operador@rjusinagem.com.br` | `operador123` | Operador |
 

@@ -1,6 +1,8 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FileCheck, Receipt } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import Textarea from '@/components/Textarea'
@@ -116,9 +118,12 @@ function FaturamentoTab() {
         padding="none"
       >
         {aFaturar.length === 0 ? (
-          <p className="p-6 text-sm text-gray-600">
-            Nenhuma OP finalizada aguardando faturamento.
-          </p>
+          <EmptyState
+            compact
+            icon={FileCheck}
+            title="Nada para faturar"
+            description="OPs finalizadas sem nota fiscal aparecem aqui para emissao."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">
@@ -157,7 +162,12 @@ function FaturamentoTab() {
 
       <Card title="Notas Emitidas" padding="none">
         {notas.length === 0 ? (
-          <p className="p-6 text-sm text-gray-600">Nenhuma nota fiscal emitida.</p>
+          <EmptyState
+            compact
+            icon={Receipt}
+            title="Nenhuma nota emitida"
+            description="As notas fiscais emitidas ficarao listadas aqui."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">

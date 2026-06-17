@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ClipboardList, SearchX } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import OrdemForm from '@/components/OrdemForm'
@@ -109,9 +111,16 @@ function OrdensProducao() {
         ) : error ? (
           <p className="py-8 text-center text-sm text-red-600">{error}</p>
         ) : ordens.length === 0 ? (
-          <p className="py-8 text-center text-sm text-gray-500">
-            Nenhuma ordem de producao cadastrada ainda.
-          </p>
+          <EmptyState
+            icon={ClipboardList}
+            title="Nenhuma ordem de producao ainda"
+            description="Crie a primeira OP para comecar a registrar producao, defeitos e financeiro."
+            action={
+              <Button variant="primary" size="sm" onClick={() => setCreating(true)}>
+                Criar primeira OP
+              </Button>
+            }
+          />
         ) : (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -139,9 +148,12 @@ function OrdensProducao() {
             </div>
 
             {ordensFiltradas.length === 0 ? (
-              <p className="py-8 text-center text-sm text-gray-500">
-                Nenhuma OP corresponde aos filtros aplicados.
-              </p>
+              <EmptyState
+                compact
+                icon={SearchX}
+                title="Nenhuma OP encontrada"
+                description="Ajuste a busca ou os filtros para ver outras ordens."
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">

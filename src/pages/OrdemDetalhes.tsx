@@ -1,7 +1,9 @@
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { Factory, ShieldCheck } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import OrdemForm from '@/components/OrdemForm'
@@ -140,9 +142,9 @@ function OrdemDetalhes() {
     acao_corretiva: '',
   })
 
-  // Encarregado e financeiro sao gestores (aprovam, cancelam, excluem).
+  // Dono e encarregado sao gestores (aprovam, cancelam, excluem).
   // Operador pode ver, criar, editar OP nao aprovada e registrar producao.
-  const isGestor = hasRole(['encarregado', 'financeiro'])
+  const isGestor = hasRole(['encarregado', 'dono'])
 
   // Re-render every second while the setup timer is running so the
   // elapsed time keeps counting on screen.
@@ -548,9 +550,12 @@ function OrdemDetalhes() {
         padding="none"
       >
         {registros.length === 0 ? (
-          <p className="p-6 text-center text-sm text-gray-600">
-            Nenhuma producao registrada
-          </p>
+          <EmptyState
+            compact
+            icon={Factory}
+            title="Nenhuma producao registrada"
+            description="Use 'Registrar Producao' para lancar as operacoes do dia."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">
@@ -613,7 +618,12 @@ function OrdemDetalhes() {
         }
       >
         {defeitos.length === 0 ? (
-          <p className="py-4 text-center text-sm text-gray-600">Nenhum defeito registrado</p>
+          <EmptyState
+            compact
+            icon={ShieldCheck}
+            title="Nenhum defeito registrado"
+            description="Otimo sinal — registre aqui se aparecer alguma peca fora de conformidade."
+          />
         ) : (
           <div className="flex flex-col gap-3">
             {defeitos.map((defeito) => (

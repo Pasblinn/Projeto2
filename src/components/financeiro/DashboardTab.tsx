@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { CheckCircle2 } from 'lucide-react'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import StatusBadge from '@/components/StatusBadge'
 import { useToast } from '@/contexts/ToastContext'
 import { saldoDevedor } from '@/services/financeiro'
@@ -97,7 +99,12 @@ function DashboardTab() {
 
       <Card title="Maiores saldos em aberto" padding="none">
         {maioresSaldos.length === 0 ? (
-          <p className="p-6 text-sm text-gray-600">Nenhuma OP com saldo em aberto.</p>
+          <EmptyState
+            compact
+            icon={CheckCircle2}
+            title="Tudo em dia"
+            description="Nenhuma OP com saldo em aberto no momento."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FileText } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Modal from '@/components/Modal'
 import StatusBadge from '@/components/StatusBadge'
 import OrcamentoForm from '@/components/financeiro/OrcamentoForm'
@@ -135,7 +137,17 @@ function OrcamentosTab() {
         padding="none"
       >
         {orcamentos.length === 0 ? (
-          <p className="p-6 text-sm text-gray-600">Nenhum orcamento cadastrado.</p>
+          <EmptyState
+            compact
+            icon={FileText}
+            title="Nenhum orcamento cadastrado"
+            description="Crie um orcamento e, ao aprovar, converta em OP com um clique."
+            action={
+              <Button variant="primary" size="sm" onClick={() => setCreating(true)}>
+                Novo orcamento
+              </Button>
+            }
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">

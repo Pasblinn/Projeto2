@@ -28,7 +28,7 @@ interface LayoutProps {
   children: ReactNode
 }
 
-const GESTORES: UserRole[] = ['financeiro', 'encarregado']
+const GESTORES: UserRole[] = ['dono', 'encarregado']
 
 const NAV_ITEMS: NavItem[] = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: GESTORES },
@@ -38,7 +38,7 @@ const NAV_ITEMS: NavItem[] = [
 ]
 
 const ROLE_LABEL: Record<UserRole, string> = {
-  financeiro: 'Financeiro',
+  dono: 'Dono',
   encarregado: 'Encarregado',
   operador: 'Operador',
 }

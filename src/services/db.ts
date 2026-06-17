@@ -160,6 +160,9 @@ const MIGRATIONS_SQL = `
   -- usuario com papel 'chefe' apenas migra de papel (mantem sua senha).
   DELETE FROM users WHERE email = 'chefe@rjusinagem.com.br';
   UPDATE users SET role = 'encarregado' WHERE role = 'chefe';
+
+  -- Papel 'financeiro' renomeado para 'dono' (mesmo acesso total).
+  UPDATE users SET role = 'dono' WHERE role = 'financeiro';
 `
 
 let dbPromise: Promise<PGlite> | null = null

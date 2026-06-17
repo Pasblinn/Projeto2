@@ -1,6 +1,8 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { Receipt } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Input from '@/components/Input'
 import Modal from '@/components/Modal'
 import Select from '@/components/Select'
@@ -151,7 +153,12 @@ function MovimentosTab() {
         </div>
 
         {visiveis.length === 0 ? (
-          <p className="p-6 text-sm text-gray-600">Nenhum movimento registrado.</p>
+          <EmptyState
+            compact
+            icon={Receipt}
+            title="Nenhum movimento registrado"
+            description="Pagamentos, estornos, ajustes e custos extras aparecem aqui."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 text-sm">

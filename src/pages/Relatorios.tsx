@@ -1,6 +1,8 @@
 import { ComponentType, useEffect, useMemo, useState } from 'react'
+import { FileBarChart } from 'lucide-react'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
+import EmptyState from '@/components/EmptyState'
 import Input from '@/components/Input'
 import Select from '@/components/Select'
 import ContasReceberReport from '@/components/reports/ContasReceberReport'
@@ -198,7 +200,7 @@ function Relatorios() {
         )}
       </Card>
 
-      {ReportComponent && paramsReady && (
+      {ReportComponent && paramsReady ? (
         <>
           <Card title="Pre-visualizacao" padding="none">
             <ReportComponent params={params} />
@@ -207,6 +209,18 @@ function Relatorios() {
             <ReportComponent params={params} />
           </PrintArea>
         </>
+      ) : (
+        <Card>
+          <EmptyState
+            icon={FileBarChart}
+            title={report ? 'Selecione os parametros' : 'Escolha um relatorio'}
+            description={
+              report
+                ? 'Defina os filtros acima para gerar a pre-visualizacao.'
+                : 'Selecione um relatorio para visualizar e imprimir em A4.'
+            }
+          />
+        </Card>
       )}
     </div>
   )
