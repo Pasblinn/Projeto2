@@ -72,8 +72,8 @@ Sistema desktop para gestao industrial de uma usinagem: controle completo de
 | Perfil | Permissoes |
 | ------ | ---------- |
 | Financeiro | Acesso total (OPs, financeiro, relatorios) |
-| Chefe de Producao | OPs, aprovacao e registro de producao |
-| Operador | Visualiza OPs e atualiza status de producao |
+| Encarregado | Acesso total (OPs, financeiro, relatorios) |
+| Operador | Restrito as OPs: ve, cria, edita e registra producao |
 
 ## Stack Tecnica
 
@@ -129,7 +129,7 @@ semeados automaticamente:
 | E-mail | Senha | Perfil |
 | ------ | ----- | ------ |
 | `admin@rjusinagem.com.br` | `admin123` | Financeiro |
-| `chefe@rjusinagem.com.br` | `chefe123` | Chefe de Producao |
+| `encarregado@rjusinagem.com.br` | `encarregado123` | Encarregado |
 | `operador@rjusinagem.com.br` | `operador123` | Operador |
 
 ## Builds de Producao

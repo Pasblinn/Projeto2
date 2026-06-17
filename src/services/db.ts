@@ -152,6 +152,16 @@ const SCHEMA_SQL = `
   );
 `
 
+// Migrations applied after the schema on every startup. Idempotent by
+// design: they only touch rows still in the old shape.
+const MIGRATIONS_SQL = `
+  -- Remove o usuario padrao antigo (chefe); o seed o recria como
+  -- encarregado@rjusinagem.com.br com a senha nova. Qualquer outro
+  -- usuario com papel 'chefe' apenas migra de papel (mantem sua senha).
+  DELETE FROM users WHERE email = 'chefe@rjusinagem.com.br';
+  UPDATE users SET role = 'encarregado' WHERE role = 'chefe';
+`
+
 let dbPromise: Promise<PGlite> | null = null
 
 function getDb(): Promise<PGlite> {
@@ -159,6 +169,7 @@ function getDb(): Promise<PGlite> {
     dbPromise = (async () => {
       const db = new PGlite(DATA_DIR)
       await db.exec(SCHEMA_SQL)
+      await db.exec(MIGRATIONS_SQL)
       return db
     })()
   }

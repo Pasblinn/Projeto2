@@ -140,7 +140,9 @@ function OrdemDetalhes() {
     acao_corretiva: '',
   })
 
-  const isGestor = hasRole(['chefe', 'financeiro'])
+  // Encarregado e financeiro sao gestores (aprovam, cancelam, excluem).
+  // Operador pode ver, criar, editar OP nao aprovada e registrar producao.
+  const isGestor = hasRole(['encarregado', 'financeiro'])
 
   // Re-render every second while the setup timer is running so the
   // elapsed time keeps counting on screen.
@@ -406,15 +408,15 @@ function OrdemDetalhes() {
               Cancelar
             </Button>
           )}
+          {!ordem.aprovada && (
+            <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
+              Editar
+            </Button>
+          )}
           {isGestor && !ordem.aprovada && (
-            <>
-              <Button variant="success" size="sm" onClick={() => setApproving(true)}>
-                Aprovar
-              </Button>
-              <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
-                Editar
-              </Button>
-            </>
+            <Button variant="success" size="sm" onClick={() => setApproving(true)}>
+              Aprovar
+            </Button>
           )}
           {isGestor && (
             <Button variant="danger" size="sm" onClick={() => setRemoving(true)}>

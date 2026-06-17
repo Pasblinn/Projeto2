@@ -14,14 +14,15 @@ Usuarios padrao do primeiro acesso (troque as senhas em uso real):
 | E-mail | Senha | Perfil |
 |--------|-------|--------|
 | `admin@rjusinagem.com.br` | `admin123` | Financeiro |
-| `chefe@rjusinagem.com.br` | `chefe123` | Chefe de Producao |
+| `encarregado@rjusinagem.com.br` | `encarregado123` | Encarregado |
 | `operador@rjusinagem.com.br` | `operador123` | Operador |
 
 ### Perfis e permissoes
 
 - **Financeiro**: acesso total (OPs, producao, financeiro, relatorios).
-- **Chefe de Producao**: OPs, aprovacao e registro de producao.
-- **Operador**: visualiza OPs e atualiza status de producao.
+- **Encarregado**: acesso total, igual ao Financeiro.
+- **Operador**: restrito as OPs — visualiza, cria, edita e registra
+  producao. Nao acessa Financeiro nem Relatorios.
 
 ## 2. Dashboard (Ordens de Producao)
 
@@ -29,7 +30,7 @@ Tela inicial com a lista de OPs. Recursos:
 
 - **Busca e filtros** por cliente, peca, codigo, status de producao e
   financeiro.
-- **Nova OP**: botao no topo (apenas Chefe/Financeiro). O formulario eh
+- **Nova OP**: botao no topo (qualquer perfil pode criar; aprovar e excluir sao restritos a Encarregado/Financeiro). O formulario eh
   dividido em secoes: dados gerais (tipo, datas de inicio/termino),
   material (material, codigo, quantidade, lote, fornecedor), cliente e
   peca (cliente, CNPJ, nome da peca, quantidade + unidade, preco do
@@ -44,7 +45,7 @@ Toda a operacao da OP acontece nesta pagina:
 
 1. **Controlar a producao** no topo: Iniciar, Pausar, Retomar,
    Finalizar ou Cancelar.
-2. **Aprovar** a OP (Chefe/Financeiro): informe o nome do supervisor.
+2. **Aprovar** a OP (Encarregado/Financeiro): informe o nome do supervisor.
    Apos aprovada, a OP nao pode mais ser editada.
 3. **Editar** (somente enquanto nao aprovada) e **Excluir** (remove
    tambem producao, defeitos e movimentos associados).
@@ -58,7 +59,7 @@ Toda a operacao da OP acontece nesta pagina:
 
 ## 5. Financeiro
 
-Menu "Financeiro" (apenas perfil Financeiro), organizado em abas:
+Menu "Financeiro" (Encarregado/Financeiro), organizado em abas:
 
 - **Dashboard**: faturamento total, recebido, a receber e maiores
   saldos em aberto.
@@ -77,7 +78,7 @@ Menu "Financeiro" (apenas perfil Financeiro), organizado em abas:
 
 ## 6. Relatorios (impressao em A4)
 
-Menu "Relatorios" (perfil Financeiro). Selecione o relatorio, ajuste
+Menu "Relatorios" (Encarregado/Financeiro). Selecione o relatorio, ajuste
 os parametros e clique em **Imprimir** (usa a impressao do sistema;
 escolha "Salvar como PDF" para gerar arquivo).
 
@@ -104,7 +105,7 @@ Os dados ficam salvos localmente (ver
 | Problema | Solucao |
 |----------|---------|
 | Nao consigo entrar | Confira e-mail/senha; usuarios padrao na secao 1 |
-| Nao vejo o menu Financeiro | Seu perfil nao eh Financeiro |
+| Nao vejo o menu Financeiro | Seu perfil eh Operador (so Encarregado/Financeiro veem o Financeiro) |
 | OP nao inicia producao | Aprove a OP primeiro |
 | Relatorio sai em branco na impressao | Selecione o relatorio e os parametros antes de imprimir |
 | Dados sumiram | Restaure o backup (docs/DATABASE.md) |

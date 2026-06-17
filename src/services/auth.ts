@@ -37,10 +37,10 @@ const SEED_USERS: SeedUser[] = [
     password: 'admin123',
   },
   {
-    email: 'chefe@rjusinagem.com.br',
-    nome: 'Chefe de Producao',
-    role: 'chefe',
-    password: 'chefe123',
+    email: 'encarregado@rjusinagem.com.br',
+    nome: 'Encarregado',
+    role: 'encarregado',
+    password: 'encarregado123',
   },
   {
     email: 'operador@rjusinagem.com.br',
@@ -78,10 +78,16 @@ export function ensureSeedUsers(): Promise<void> {
 }
 
 async function seedUsers(): Promise<void> {
-  if ((await listRows('users')).length > 0) return
+  // Seed each default user that is missing (matched by e-mail), instead of
+  // only when the table is empty. This keeps the default accounts available
+  // even after a migration removes/renames one of them.
+  const existing = await listRows('users')
+  const existingEmails = new Set(existing.map((u) => u.email.toLowerCase()))
+  const missing = SEED_USERS.filter((s) => !existingEmails.has(s.email.toLowerCase()))
+  if (missing.length === 0) return
 
-  const rows: DbUser[] = await Promise.all(
-    SEED_USERS.map(async (seed) => ({
+  for (const seed of missing) {
+    await insertRow('users', {
       id: generateId(),
       email: seed.email,
       nome: seed.nome,
@@ -89,13 +95,7 @@ async function seedUsers(): Promise<void> {
       password_hash: await hashPassword(seed.password),
       created_at: nowIso(),
       updated_at: nowIso(),
-    })),
-  )
-
-  // Re-check after the async hashing: another tab/window may have seeded.
-  if ((await listRows('users')).length > 0) return
-  for (const row of rows) {
-    await insertRow('users', row)
+    })
   }
 }
 

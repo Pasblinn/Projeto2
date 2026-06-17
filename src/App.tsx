@@ -13,6 +13,10 @@ import Financeiro from '@/pages/Financeiro'
 import Relatorios from '@/pages/Relatorios'
 import Forbidden from '@/pages/Forbidden'
 import NotFound from '@/pages/NotFound'
+import type { UserRole } from '@/types'
+
+// Quem enxerga tudo: encarregado e financeiro. Operador fica restrito as OPs.
+const GESTORES: UserRole[] = ['financeiro', 'encarregado']
 
 function App() {
   // HashRouter: in the packaged Electron app the page loads via file://,
@@ -31,13 +35,20 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <RoleGuard allow={GESTORES} fallback="/ordens">
+                    <Dashboard />
+                  </RoleGuard>
+                }
+              />
               <Route path="/ordens" element={<OrdensProducao />} />
               <Route path="/ordens/:id" element={<OrdemDetalhes />} />
               <Route
                 path="/financeiro"
                 element={
-                  <RoleGuard allow="financeiro" fallback="/403">
+                  <RoleGuard allow={GESTORES} fallback="/403">
                     <Financeiro />
                   </RoleGuard>
                 }
@@ -45,7 +56,7 @@ function App() {
               <Route
                 path="/relatorios"
                 element={
-                  <RoleGuard allow="financeiro" fallback="/403">
+                  <RoleGuard allow={GESTORES} fallback="/403">
                     <Relatorios />
                   </RoleGuard>
                 }

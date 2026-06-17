@@ -28,16 +28,18 @@ interface LayoutProps {
   children: ReactNode
 }
 
+const GESTORES: UserRole[] = ['financeiro', 'encarregado']
+
 const NAV_ITEMS: NavItem[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: GESTORES },
   { key: 'ordens', label: 'Ordens de Producao', icon: ClipboardList },
-  { key: 'financeiro', label: 'Financeiro', icon: Wallet, roles: ['financeiro'] },
-  { key: 'relatorios', label: 'Relatorios', icon: BarChart3, roles: ['financeiro'] },
+  { key: 'financeiro', label: 'Financeiro', icon: Wallet, roles: GESTORES },
+  { key: 'relatorios', label: 'Relatorios', icon: BarChart3, roles: GESTORES },
 ]
 
 const ROLE_LABEL: Record<UserRole, string> = {
   financeiro: 'Financeiro',
-  chefe: 'Chefe de Producao',
+  encarregado: 'Encarregado',
   operador: 'Operador',
 }
 

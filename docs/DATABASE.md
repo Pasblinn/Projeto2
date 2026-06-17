@@ -48,7 +48,7 @@ Na primeira execucao a tabela `users` eh semeada com tres usuarios:
 | E-mail | Senha | Papel |
 |--------|-------|-------|
 | `admin@rjusinagem.com.br` | `admin123` | Financeiro (acesso total) |
-| `chefe@rjusinagem.com.br` | `chefe123` | Chefe de Producao |
+| `encarregado@rjusinagem.com.br` | `encarregado123` | Encarregado |
 | `operador@rjusinagem.com.br` | `operador123` | Operador |
 
 > Troque as senhas padrao apos o primeiro acesso em ambiente real.
