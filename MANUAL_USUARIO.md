@@ -19,8 +19,9 @@ Usuarios padrao do primeiro acesso (troque as senhas em uso real):
 
 ### Perfis e permissoes
 
-- **Financeiro**: acesso total (OPs, producao, financeiro, relatorios).
-- **Encarregado**: acesso total, igual ao Dono (perfil dono = financeiro renomeado).
+- **Dono**: acesso total (Dashboard executivo, OPs, Financeiro, Relatorios).
+- **Encarregado**: OPs (aprova/cancela/exclui), Financeiro e Relatorios;
+  **nao** acessa o Dashboard executivo (exclusivo do Dono).
 - **Operador**: restrito as OPs — visualiza, cria, edita e registra
   producao. Nao acessa Financeiro nem Relatorios.
 

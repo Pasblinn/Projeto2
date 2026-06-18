@@ -31,7 +31,7 @@ interface LayoutProps {
 const GESTORES: UserRole[] = ['dono', 'encarregado']
 
 const NAV_ITEMS: NavItem[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: GESTORES },
+  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['dono'] },
   { key: 'ordens', label: 'Ordens de Producao', icon: ClipboardList },
   { key: 'financeiro', label: 'Financeiro', icon: Wallet, roles: GESTORES },
   { key: 'relatorios', label: 'Relatorios', icon: BarChart3, roles: GESTORES },

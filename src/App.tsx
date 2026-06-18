@@ -15,8 +15,10 @@ import Forbidden from '@/pages/Forbidden'
 import NotFound from '@/pages/NotFound'
 import type { UserRole } from '@/types'
 
-// Quem enxerga tudo: dono e encarregado. Operador fica restrito as OPs.
+// Dono e encarregado acessam Financeiro/Relatorios; o Dashboard executivo
+// eh exclusivo do dono. Operador fica restrito as OPs.
 const GESTORES: UserRole[] = ['dono', 'encarregado']
+const SO_DONO: UserRole[] = ['dono']
 
 function App() {
   // HashRouter: in the packaged Electron app the page loads via file://,
@@ -38,7 +40,7 @@ function App() {
               <Route
                 path="/dashboard"
                 element={
-                  <RoleGuard allow={GESTORES} fallback="/ordens">
+                  <RoleGuard allow={SO_DONO} fallback="/ordens">
                     <Dashboard />
                   </RoleGuard>
                 }

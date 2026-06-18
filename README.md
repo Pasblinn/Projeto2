@@ -79,8 +79,8 @@ Sistema desktop para gestao industrial de uma usinagem: controle completo de
 
 | Perfil | Permissoes |
 | ------ | ---------- |
-| Dono | Acesso total (OPs, financeiro, relatorios) |
-| Encarregado | Acesso total (OPs, financeiro, relatorios) |
+| Dono | Acesso total, incluindo o Dashboard executivo |
+| Encarregado | Ordens, Financeiro e Relatorios; aprova/cancela/exclui OP (sem o Dashboard executivo) |
 | Operador | Restrito as OPs: ve, cria, edita e registra producao |
 
 ## Stack Tecnica
